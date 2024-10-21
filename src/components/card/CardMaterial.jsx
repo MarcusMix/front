@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { Card, CardHeader, CardMedia, CardContent, CardActions, Avatar, Typography } from '@mui/material';
 import { red } from '@mui/material/colors';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
-import IconButton from '@mui/material/IconButton';
 
-export default function CardMaterial({ title, subheader, avatarLetter, image, experience }) {
+export default function CardMaterial({ title, subheader, avatarLetter, image, experience, nameProvider }) {
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardHeader
@@ -25,17 +22,12 @@ export default function CardMaterial({ title, subheader, avatarLetter, image, ex
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          Experiência: {experience} anos {/* Experiência dinâmica */}
+          Experiência: {experience} {/* Experiência dinâmica */}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Prestador: {nameProvider} 
         </Typography>
       </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
-      </CardActions>
     </Card>
   );
 }
