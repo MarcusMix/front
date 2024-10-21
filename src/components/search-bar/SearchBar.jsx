@@ -60,7 +60,7 @@ export default function SearchAppBar() {
           height: '80px', // Define a altura da barra para 100% da tela
           display: 'flex',
           justifyContent: 'center', 
-          backgroundColor: '#ffea00',
+          backgroundColor: '#FFC107',
         }}
       >
         <Toolbar>
