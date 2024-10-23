@@ -42,10 +42,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
     [theme.breakpoints.up('sm')]: {
-      width: '12ch',
+      width: '30ch',
       '&:focus': {
-        width: '20ch',
+        width: '40ch',
       },
+    '&::placeholder': {
+      color: '#f8f8f8', // Altere esta cor para qualquer que você queira
+      opacity: 1, // Para garantir que o placeholder seja totalmente visível
+    },
     },
   },
 }));
@@ -57,7 +61,7 @@ export default function SearchAppBar() {
         position="fixed" 
         sx={{ 
           width: '100%', 
-          height: '80px', // Define a altura da barra para 100% da tela
+          height: '60px', // Define a altura da barra para 100% da tela
           display: 'flex',
           justifyContent: 'center', 
           backgroundColor: '#FFC107',
@@ -86,7 +90,7 @@ export default function SearchAppBar() {
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search…"
+              placeholder="Procurar prestador"
               inputProps={{ 'aria-label': 'search' }}
             />
           </Search>

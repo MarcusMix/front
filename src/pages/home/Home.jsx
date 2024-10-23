@@ -11,7 +11,7 @@ function Home() {
 
   async function fetchOfferedService() {
     try {
-      const offeredServiceData = await getDataFunction('offered-services');
+      const offeredServiceData = await getDataFunction('offered-service');
       console.log('Dados retornados pela API:', offeredServiceData);
       setOfferedServiceData(offeredServiceData);
 
@@ -49,8 +49,10 @@ function Home() {
   return (
     <div>
       <SearchAppBar />
-      <Typography variant="h1" component="h2">
-        Tela inicial
+      {/* Espaço para compensar a altura da AppBar */}
+      <div style={{ height: '60px' }} />
+      <Typography variant="h3" component="h2" style={{marginBottom: '10px'}}>
+        Procure seu prestador de serviço!
       </Typography>
       <Grid container spacing={4} justifyContent="center">
         {offeredServices.map((offeredService) => (
@@ -58,18 +60,17 @@ function Home() {
             <div style={{ minWidth: '280px', maxWidth: '300px' }}>
               <CardMaterial
                 title={offeredService.name}
-                // subheader={offeredService.description}
                 avatarLetter={
                   serviceProviders[offeredService.serviceProviderId]
-                    ? serviceProviders[offeredService.serviceProviderId].name[0] // Usa a primeira letra do nome do serviceProvider
-                    : offeredService.name[0] || 'N' // Usa a primeira letra do nome do offeredService ou 'N'
+                    ? serviceProviders[offeredService.serviceProviderId].name[0]
+                    : offeredService.name[0] || 'N'
                 }
                 image={serviceProviders[offeredService.serviceProviderId].image || ''}
                 experience={serviceProviders[offeredService.serviceProviderId].experience}
                 nameProvider={
                   serviceProviders[offeredService.serviceProviderId]
                     ? serviceProviders[offeredService.serviceProviderId].name
-                    : 'Prestador não encontrado' // Valor padrão se não encontrar o prestador
+                    : 'Prestador não encontrado'
                 }
               />
             </div>
@@ -77,7 +78,7 @@ function Home() {
         ))}
       </Grid>
     </div>
-  );
+  );  
 }
 
 export default Home;
