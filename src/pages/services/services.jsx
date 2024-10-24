@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Typography, Card, Grid, Avatar, Box, CircularProgress, Button } from '@mui/material';
+import { Container, Typography, Card, Grid, Avatar, Box, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
 import getDataFunction from '../../api/api';
+import Button from '../../components/button/button';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   maxWidth: '600px',
@@ -108,9 +109,7 @@ function ServiceDetails() {
         
         {/* Centraliza o botão */}
         <Box display="flex" justifyContent="center" marginTop={2}>
-          <Button variant="contained" color="success">
-            Contratar
-          </Button>
+        <Button type="submit" label="Contratar serviço" />
         </Box>
       </StyledCard>
     </Container>
