@@ -13,29 +13,23 @@ function Home() {
 
   async function fetchOfferedService() {
     try {
-<<<<<<< HEAD
+      // Aqui vamos manter 'offered-service' como o endpoint correto, de acordo com o que foi solicitado
       const offeredServiceData = await getDataFunction('offered-service');
-=======
-<<<<<<< Updated upstream
-      const offeredServiceData = await getDataFunction('offered-services');
->>>>>>> 87435ca (feat: page service)
       console.log('Dados retornados pela API:', offeredServiceData);
-=======
-      const offeredServiceData = await getDataFunction('offered-service');
->>>>>>> Stashed changes
       setOfferedServiceData(offeredServiceData);
 
+      // Para cada serviceProviderId, faça uma requisição para buscar os dados do prestador de serviço
       const providerDataPromises = offeredServiceData.map(async (service) => {
         if (service.serviceProviderId) {
           const providerData = await getDataFunction(`service-provider/${service.serviceProviderId}`);
           return { [service.serviceProviderId]: providerData };
         }
-        return null;
+        return null; // Se não houver serviceProviderId, retorna null
       });
 
       const providers = await Promise.all(providerDataPromises);
-      const providerMap = Object.assign({}, ...providers.filter(Boolean));
-      setServiceProviders(providerMap);
+      const providerMap = Object.assign({}, ...providers.filter(Boolean)); // Filtra valores nulos
+      setServiceProviders(providerMap);  // Armazena os dados dos prestadores por ID
     } catch (error) {
       console.error('Erro ao buscar dados do prestador de serviço:', error);
     } finally {
@@ -63,21 +57,10 @@ function Home() {
   return (
     <div>
       <SearchAppBar />
-<<<<<<< HEAD
       {/* Espaço para compensar a altura da AppBar */}
-      <div style={{ height: '60px' }} />
-      <Typography variant="h3" component="h2" style={{marginBottom: '10px'}}>
-        Procure seu prestador de serviço!
-=======
-<<<<<<< Updated upstream
-      <Typography variant="h1" component="h2">
-        Tela inicial
-=======
       <div style={{ height: '60px' }} />
       <Typography variant="h3" component="h2" style={{ marginBottom: '10px' }}>
         Procure seu prestador de serviço!
->>>>>>> Stashed changes
->>>>>>> 87435ca (feat: page service)
       </Typography>
       <Grid container spacing={4} justifyContent="center">
         {offeredServices.map((offeredService) => (
@@ -97,17 +80,7 @@ function Home() {
                 image={serviceProviders[offeredService.serviceProviderId]?.image || ''}
                 experience={serviceProviders[offeredService.serviceProviderId]?.experience}
                 nameProvider={
-<<<<<<< Updated upstream
-                  serviceProviders[offeredService.serviceProviderId]
-                    ? serviceProviders[offeredService.serviceProviderId].name
-<<<<<<< HEAD
-                    : 'Prestador não encontrado'
-=======
-                    : 'Prestador não encontrado' // Valor padrão se não encontrar o prestador
-=======
                   serviceProviders[offeredService.serviceProviderId]?.name || 'Prestador não encontrado'
->>>>>>> Stashed changes
->>>>>>> 87435ca (feat: page service)
                 }
               />
             </div>
@@ -115,7 +88,7 @@ function Home() {
         ))}
       </Grid>
     </div>
-  );  
+  );
 }
 
 export default Home;
