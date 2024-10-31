@@ -5,6 +5,7 @@ import Login from './pages/login/login';
 import ServiceDetails from './pages/services/services';
 import SignUpUser from './pages/signup-user/signup-user';
 import SignUpService from './pages/signup-service/signup-service';
+import ConfigUser from './pages/config-user/config-user';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/signup-user" element={<SignUpUser />} />
         <Route path="/signup-service" element={<SignUpService/>} />
         <Route path="/service/:id" element={<ServiceDetails/>} />
+        <Route path="/config-user" element={<ConfigUser/>} />
       </Routes>
     </Router>
   );
