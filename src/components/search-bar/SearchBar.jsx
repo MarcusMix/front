@@ -1,5 +1,6 @@
 import React from 'react';
 import { styled, alpha } from '@mui/material/styles';
+import { Link } from 'react-router-dom'; // Importando o Link
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -63,7 +64,12 @@ export default function SearchAppBar() {
     setAnchorElUser(null);
   };
 
-  const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+  const settings = [
+    { name: 'Profile', path: '/config-user' }, // Adicionando a rota
+    'Account',
+    'Dashboard',
+    'Logout',
+  ];
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -115,8 +121,14 @@ export default function SearchAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                <MenuItem key={setting.name || setting} onClick={handleCloseUserMenu}>
+                  {setting.path ? (
+                    <Link to={setting.path} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <Typography textAlign="center">{setting.name}</Typography>
+                    </Link>
+                  ) : (
+                    <Typography textAlign="center">{setting}</Typography>
+                  )}
                 </MenuItem>
               ))}
             </Menu>
