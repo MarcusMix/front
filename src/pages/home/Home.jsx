@@ -77,7 +77,7 @@ function Home() {
                     ? serviceProviders[offeredService.serviceProviderId].name[0]
                     : offeredService.name[0] || 'N'
                 }
-                image={serviceProviders[offeredService.serviceProviderId]?.image || ''}
+                image={`data:image/jpeg;base64,${serviceProviders[offeredService.serviceProviderId]?.image}`}
                 experience={serviceProviders[offeredService.serviceProviderId]?.experience}
                 nameProvider={
                   serviceProviders[offeredService.serviceProviderId]?.name || 'Prestador não encontrado'
