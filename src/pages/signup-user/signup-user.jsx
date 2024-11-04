@@ -7,6 +7,7 @@ import FormBox from '../../components/form-box/FormBox';
 import FormContainer from '../../components/form-container/FormContainer';
 import getDataFunction from '../../api/api'; // Função para fazer requisições
 import Subtitle from '../../components/subtitle/Subtitle';
+import { toast } from 'react-hot-toast'; // Importando o toast
 
 const SignUpUser = () => {
   const [userData, setUserData] = useState({
@@ -41,7 +42,7 @@ const SignUpUser = () => {
 
     // Verificação dos campos de endereço
     if (!addressData.street || !addressData.number || !addressData.neighborhood || !addressData.city || !addressData.state) {
-      console.error('Todos os campos de endereço devem ser preenchidos.');
+      toast.error('Todos os campos de endereço devem ser preenchidos.'); // Notificação de erro
       return;
     }
 
@@ -66,13 +67,27 @@ const SignUpUser = () => {
 
         // Salvar o usuário com o ID do endereço
         const userResponse = await getDataFunction('user', 'POST', userDataWithAddress);
-        console.log('User data saved successfully:', userResponse);
+
+        // Verifique se o usuário foi salvo com sucesso
+        // Verifica se a resposta do usuário foi bem-sucedida
+        if (userResponse) {
+          toast.success('Usuário cadastrado com sucesso!');
+          setTimeout(() => {
+            window.location.href = '/'; // Redireciona para a página inicial
+          }, 2000);
       } else {
+          // Captura erro quando o status não é 200
+          const errorMessage = userResponse?.data?.error || 'Ocorreu um erro ao cadastrar o usuário.';
+          toast.error(errorMessage); // Mostra o erro específico retornado pelo backend
+      }
+
+      } else {
+        toast.error('Houve um erro ao salvar os dados do endereço.'); // Notificação de erro
         throw new Error('Failed to save address data.');
       }
     } catch (error) {
       console.error('Error saving data:', error);
-      alert('Houve um erro ao salvar os dados. Verifique os campos e tente novamente.'); // Mensagem para o usuário
+      toast.error('Houve um erro ao salvar os dados. Verifique os campos e tente novamente.'); // Notificação de erro
     }
   };
 

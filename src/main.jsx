@@ -6,10 +6,12 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import { Toaster } from 'react-hot-toast';
 
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    <Toaster />
     <App />
   </StrictMode>,
 )
