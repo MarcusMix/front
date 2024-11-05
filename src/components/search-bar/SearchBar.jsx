@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import { Link } from 'react-router-dom'; // Importando o Link
 import AppBar from '@mui/material/AppBar';
@@ -12,6 +12,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -53,8 +54,67 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const CepInput = styled(TextField)(({ theme }) => ({
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: 'transparent', // Remove a borda padrão
+      borderRadius: theme.shape.borderRadius, // Usa o mesmo borderRadius da barra de pesquisa
+    },
+    backgroundColor: alpha(theme.palette.common.white, 0.15),
+    '&:hover fieldset': {
+      backgroundColor: alpha(theme.palette.common.white, 0.25), // Mesma cor de hover da barra de pesquisa
+    },
+    '&.Mui-focused fieldset': {
+      backgroundColor: alpha(theme.palette.common.white, 0.35), // Cor de foco similar à barra de pesquisa
+    },
+    '& .MuiInputBase-input': {
+      padding: theme.spacing(1, 1, 1, 0),
+      paddingLeft: `calc(1em + ${theme.spacing(1)})`, // Ajusta o padding interno
+    },
+  },
+}));
+
 export default function SearchAppBar() {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [cep, setCep] = useState(''); // Estado para armazenar o CEP
+
+
+  const handleCepChange = (event) => {
+    setCep(event.target.value);
+  };
+
+  useEffect(() => {
+    // Carrega o CEP do localStorage quando o componente é montado
+    const storedCep = localStorage.getItem('cep');
+    if (storedCep) {
+      setCep(storedCep);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Salva o CEP no localStorage sempre que o valor do CEP mudar
+    localStorage.setItem('cep', cep);
+  }, [cep]);
+
+  useEffect(() => {
+    // Função para buscar endereço pelo CEP
+    const fetchAddress = async () => {
+      if (cep.length === 8) { // Verifica se o CEP tem 8 dígitos
+        try {
+          const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+          const data = await response.json();
+          // Aqui você pode usar os dados retornados pela API para
+          // preencher outros campos do endereço, como:
+          // data.logradouro, data.bairro, data.localidade, data.uf
+          console.log(data);
+        } catch (error) {
+          console.error('Erro ao buscar endereço:', error);
+        }
+      }
+    };
+
+    fetchAddress();
+  }, [cep]);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -73,10 +133,10 @@ export default function SearchAppBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar 
-        position="fixed" 
-        sx={{ 
-          width: '100%', 
+      <AppBar
+        position="fixed"
+        sx={{
+          width: '100%',
           backgroundColor: '#FFC107',
         }}
       >
@@ -98,7 +158,19 @@ export default function SearchAppBar() {
           >
             Marketplace do Job
           </Typography>
-          
+
+          <CepInput // Novo campo de CEP
+            label="CEP"
+            variant="outlined"
+            size="small"
+            value={cep}
+            onChange={handleCepChange}
+            sx={{
+              width: '150px',
+              marginRight: 2,
+            }}
+          />
+
           <Search sx={{ mx: 2 }}>
             <SearchIconWrapper>
               <SearchIcon />
