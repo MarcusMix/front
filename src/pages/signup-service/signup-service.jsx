@@ -24,13 +24,6 @@ const SignUpService = () => {
           <Input type="imagem" placeholder="Imagem" />
         </FormContainer>
         <Subtitle>Endereço</Subtitle> 
-        <FormContainer>
-          <Input type="estado" placeholder="Estado" />
-          <Input type="cidade" placeholder="Cidade" />
-          <Input type="bairro" placeholder="Bairro" />
-          <Input type="rua" placeholder="Rua" />
-          <Input type="numero" placeholder="Número" />
-        </FormContainer>
         <Button type="submit" label="Cadastrar Perfil de Prestador" />
       </form>
     </FormBox>
