@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import './signup-user.css';
-import Input from '../../components/input/input'; // Componente de Input
+import Input from '../../components/input/input'; 
 import Button from '../../components/button/button';
 import Title from '../../components/title/Title';
 import FormBox from '../../components/form-box/FormBox';
 import FormContainer from '../../components/form-container/FormContainer';
-import getDataFunction from '../../api/api'; // Função para fazer requisições
+import getDataFunction from '../../api/api'; 
 import Subtitle from '../../components/subtitle/Subtitle';
-import { toast } from 'react-hot-toast'; // Importando o toast
+import { toast } from 'react-hot-toast'; 
 
 const SignUpUser = () => {
   const [userData, setUserData] = useState({
@@ -40,22 +40,18 @@ const SignUpUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Verificação dos campos de endereço
     if (!addressData.street || !addressData.number || !addressData.neighborhood || !addressData.city || !addressData.state) {
-      toast.error('Todos os campos de endereço devem ser preenchidos.'); // Notificação de erro
+      toast.error('Todos os campos de endereço devem ser preenchidos.'); 
       return;
     }
 
-    console.log('Address Data Before POST:', addressData); // Verifique os dados do endereço antes do POST
-
+    console.log('Address Data Before POST:', addressData); 
     try {
-      // Salvar o endereço primeiro
       const addressResponse = await getDataFunction('address', 'POST', addressData);
       
       if (addressResponse && addressResponse.id) {
         console.log('Address data saved successfully:', addressResponse);
 
-        // Atualizar userData com o ID do endereço
         const userDataWithAddress = {
           ...userData,
           addressDTO: {
@@ -63,31 +59,27 @@ const SignUpUser = () => {
           },
         };
 
-        console.log('User Data With Address:', userDataWithAddress); // Verifique os dados do usuário antes do POST
+        console.log('User Data With Address:', userDataWithAddress); 
 
-        // Salvar o usuário com o ID do endereço
         const userResponse = await getDataFunction('user', 'POST', userDataWithAddress);
 
-        // Verifique se o usuário foi salvo com sucesso
-        // Verifica se a resposta do usuário foi bem-sucedida
         if (userResponse) {
           toast.success('Usuário cadastrado com sucesso!');
           setTimeout(() => {
-            window.location.href = '/'; // Redireciona para a página inicial
+            window.location.href = '/'; 
           }, 2000);
       } else {
-          // Captura erro quando o status não é 200
           const errorMessage = userResponse?.data?.error || 'Ocorreu um erro ao cadastrar o usuário.';
-          toast.error(errorMessage); // Mostra o erro específico retornado pelo backend
+          toast.error(errorMessage); 
       }
 
       } else {
-        toast.error('Houve um erro ao salvar os dados do endereço.'); // Notificação de erro
+        toast.error('Houve um erro ao salvar os dados do endereço.');
         throw new Error('Failed to save address data.');
       }
     } catch (error) {
       console.error('Error saving data:', error);
-      toast.error('Houve um erro ao salvar os dados. Verifique os campos e tente novamente.'); // Notificação de erro
+      toast.error('Houve um erro ao salvar os dados. Verifique os campos e tente novamente.');
     }
   };
 
