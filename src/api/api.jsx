@@ -1,27 +1,67 @@
+// export default async function getDataFunction(endpoint, method = 'GET', body = null) {
+//     const url = `http://localhost:8080/${endpoint}`;
+//     const options = {
+//       method: method,
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//     };
+  
+//     if (body) {
+//       options.body = JSON.stringify(body);
+//     }
+  
+//     try {
+//       const response = await fetch(url, options);
+//       if (!response.ok) {
+//         throw new Error(`HTTP error! status: ${response.status}`);
+//       }
+//       const data = await response.json();
+//       return data;
+//     } catch (error) {
+//       console.error('There was an error making the request', error);
+//     }
+//   }
+
 export default async function getDataFunction(endpoint, method = 'GET', body = null) {
-    const url = `http://localhost:8080/${endpoint}`;
-    const options = {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-  
-    if (body) {
-      options.body = JSON.stringify(body);
+  const url = `http://localhost:8080/${endpoint}`;
+  const options = {
+    method: method,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+
+  if (body) {
+    options.body = body; // body já é uma string JSON
+  }
+
+  try {
+    const response = await fetch(url, options);
+    
+    // Verifica se a resposta é bem-sucedida
+    if (!response.ok) {
+      console.log("erro")
+      // Tenta ler o erro como texto para debugar
+      const errorText = await response.text();
+      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
     }
-  
-    try {
-      const response = await fetch(url, options);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+    console.log("passou")
+    // Tenta parsear o JSON se o conteúdo existir
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
       const data = await response.json();
       return data;
-    } catch (error) {
-      console.error('There was an error making the request', error);
+    } else {
+      // Retorna a resposta em texto se não for JSON
+      return await response.text();
     }
+  } catch (error) {
+    console.error('There was an error making the request:', error.message);
+    return null; // Retorna null caso ocorra um erro
   }
+}
+  
   
 
 //   const response = await makeRequest(`service-provider/${id}`, 'PUT', updatedServiceProvider);
