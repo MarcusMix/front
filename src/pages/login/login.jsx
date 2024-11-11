@@ -1,4 +1,3 @@
-// Login.js
 import React, { useState } from 'react';
 import './login.css';
 import Input from '../../components/input/input';

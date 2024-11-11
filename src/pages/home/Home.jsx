@@ -55,9 +55,9 @@ function Home() {
     return <Typography>Carregando...</Typography>;
   }
 
-  if (offeredServices.length === 0) {
-    return <Typography>Erro: Nenhum prestador de serviço encontrado.</Typography>;
-  }
+  // if (offeredServices.length === 0) {
+  //   return <Typography>Erro: Nenhum prestador de serviço encontrado.</Typography>;
+  // }
 
   return (
     <div>
