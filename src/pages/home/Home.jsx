@@ -9,6 +9,7 @@ function Home() {
   const [offeredServices, setOfferedServiceData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [serviceProviders, setServiceProviders] = useState({});
+  const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate(); // Para navegação
 
   async function fetchOfferedService() {
@@ -46,6 +47,10 @@ function Home() {
     navigate(`/service/${id}`);
   };
 
+  const handleSearch = (results) => {
+    setSearchResults(results);
+  };
+
   if (loading) {
     return <Typography>Carregando...</Typography>;
   }
@@ -56,14 +61,11 @@ function Home() {
 
   return (
     <div>
-      <SearchAppBar />
+      <SearchAppBar onSearch={handleSearch} />
       {/* Espaço para compensar a altura da AppBar */}
-      <div style={{ height: '60px' }} />
-      <Typography variant="h3" component="h2" style={{ marginBottom: '10px' }}>
-        Procure seu prestador de serviço!
-      </Typography>
+      <div style={{ height: '80px' }} />
       <Grid container spacing={4} justifyContent="center">
-        {offeredServices.map((offeredService) => (
+        {(searchResults.length > 0 ? searchResults : offeredServices).map((offeredService) => (
           <Grid
             item
             key={offeredService.id}

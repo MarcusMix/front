@@ -13,6 +13,7 @@ import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -74,10 +75,62 @@ const CepInput = styled(TextField)(({ theme }) => ({
   },
 }));
 
-export default function SearchAppBar() {
+export default function SearchAppBar({ onSearch }) {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [cep, setCep] = useState(''); // Estado para armazenar o CEP
+  const [searchTerm, setSearchTerm] = useState('');
 
+  const fetchAddress = async (cep) => {
+    if (cep.length === 8) {
+      try {
+        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Erro ao buscar endereço: ', error);
+        return null;
+      }
+    } else {
+      console.warn('CEP inválido:', cep);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+  }, [cep]);
+
+  const handleSearch = async () => {
+    try {
+      const address = await fetchAddress(cep); // Chamar a função fetchAddress
+      if (address) {
+        const userLocation = address.localidade;
+
+        // Definir searchDTO aqui, antes da requisição fetch
+        const searchDTO = {
+          serviceName: searchTerm,
+          userLocation: userLocation,
+        };
+
+        const token = localStorage.getItem('token'); // Obter o token do localStorage
+        const response = await fetch('http://localhost:8080/offered-service/search', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(searchDTO),
+        });
+
+        const results = await response.json();
+
+        onSearch(results); // Chamar a função onSearch recebida como prop
+      } else {
+        console.error("Endereço não encontrado para o CEP informado.");
+      }
+    } catch (error) {
+      console.error('Erro ao buscar serviços:', error);
+    }
+  };
 
   const handleCepChange = (event) => {
     setCep(event.target.value);
@@ -178,8 +231,26 @@ export default function SearchAppBar() {
             <StyledInputBase
               placeholder="Procurar prestador"
               inputProps={{ 'aria-label': 'search' }}
+              value={searchTerm} // Adicionar value
+              onChange={(e) => setSearchTerm(e.target.value)} // Adicionar onChange
             />
           </Search>
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSearch} // Adicionar onClick
+            sx={{
+              marginLeft: 2,
+              borderRadius: 2,
+              backgroundColor: '#388E3C',
+              '&:hover': {
+                backgroundColor: '#2E7D32',
+              }
+            }}
+          >
+            <SearchIcon />
+          </Button>
 
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
