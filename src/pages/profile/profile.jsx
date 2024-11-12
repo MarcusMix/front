@@ -6,7 +6,7 @@ import TitleNew from '../../components/title/Title';
 import { Link } from 'react-router-dom';
 
 
-const ConfigUser = () => {
+const Profile = () => {
   return (
     <Container maxWidth="sm" >
           <Box 
@@ -27,4 +27,4 @@ const ConfigUser = () => {
   );
 };
 
-export default ConfigUser;
+export default Profile;
