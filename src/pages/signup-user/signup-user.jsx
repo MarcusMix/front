@@ -8,13 +8,14 @@ import FormContainer from '../../components/form-container/FormContainer';
 import getDataFunction from '../../api/api'; 
 import Subtitle from '../../components/subtitle/Subtitle';
 import { toast } from 'react-hot-toast'; 
+import userAPI from '../../api/user';
 
 const SignUpUser = () => {
   const [userData, setUserData] = useState({
     name: '',
     email: '',
     password: '',
-    addressDTO: {
+    address: {
       id: null,
     },
   });
@@ -39,40 +40,39 @@ const SignUpUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     if (!addressData.street || !addressData.number || !addressData.neighborhood || !addressData.city || !addressData.state) {
-      toast.error('Todos os campos de endereço devem ser preenchidos.'); 
+      toast.error('Todos os campos de endereço devem ser preenchidos.');
       return;
     }
-
-    console.log('Address Data Before POST:', addressData); 
+  
     try {
       const addressResponse = await getDataFunction('address', 'POST', addressData);
       
       if (addressResponse && addressResponse.id) {
         console.log('Address data saved successfully:', addressResponse);
-
+  
         const userDataWithAddress = {
           ...userData,
-          addressDTO: {
+          address: {
             id: addressResponse.id,
           },
         };
-
-        console.log('User Data With Address:', userDataWithAddress); 
-
-        const userResponse = await getDataFunction('user', 'POST', userDataWithAddress);
-
-        if (userResponse) {
+  
+        console.log('User Data With Address:', userDataWithAddress);
+  
+        const userResponse = await userAPI('auth/register', 'POST', userDataWithAddress);
+        console.log('User Response:', userResponse);
+  
+        if (userResponse == undefined) {
           toast.success('Usuário cadastrado com sucesso!');
           setTimeout(() => {
             window.location.href = '/'; 
           }, 2000);
-      } else {
-          const errorMessage = userResponse?.data?.error || 'Ocorreu um erro ao cadastrar o usuário.';
-          toast.error(errorMessage); 
-      }
-
+        } else {
+          toast.error('Usuário cadastrado, mas a resposta não foi recebida corretamente.');
+        }
+  
       } else {
         toast.error('Houve um erro ao salvar os dados do endereço.');
         throw new Error('Failed to save address data.');
@@ -82,6 +82,7 @@ const SignUpUser = () => {
       toast.error('Houve um erro ao salvar os dados. Verifique os campos e tente novamente.');
     }
   };
+  
 
   return (
     <FormBox>
