@@ -178,7 +178,7 @@ export default function SearchAppBar({ onSearch }) {
   };
 
   const settings = [
-    { name: 'Profile', path: '/config-user' }, // Adicionando a rota
+    { name: 'Profile', path: '/profile' }, // Adicionando a rota
     'Account',
     'Dashboard',
     'Logout',
