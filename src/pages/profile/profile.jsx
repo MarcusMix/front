@@ -25,7 +25,7 @@ const Profile = () => {
     const fetchUserInfo = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/user?email=${loggedInUsername}`, // Email como parâmetro de consulta
+          `http://localhost:8080/user/by-email?email=${loggedInUsername}`, // Endpoint atualizado
           {
             method: 'GET',
             headers: {
@@ -33,22 +33,19 @@ const Profile = () => {
             },
           }
         );
-
-        // Verifica se a resposta é válida
+    
         if (!response.ok) {
           throw new Error(`Erro na requisição: ${response.status}`);
         }
-
+    
         const data = await response.json();
         setUserInfo(data);
+        console.log(data)
       } catch (error) {
         console.error("Erro ao buscar informações do usuário:", error);
       }
     };
-
-    if (loggedInUsername && token) {
-      fetchUserInfo();
-    }
+    fetchUserInfo()
   }, [loggedInUsername, token]);
 
   if (!userInfo) {
@@ -65,8 +62,10 @@ const Profile = () => {
           padding: 2,
         }}
       >
-        <TitleNew>Bem-vindo ao seu perfil!</TitleNew>
-        <p>{userInfo.name}</p>
+        <TitleNew>Bem-vindo {userInfo.name}, ao seu perfil!</TitleNew>
+        <p>E-mail da conta: {userInfo.email}</p>
+        <p>Cidade: {userInfo.addressDTO.city}</p>
+        <p>Estado: {userInfo.addressDTO.state}</p>
         <Link to="/signup-service">
           <Button label="Criar Perfil de Prestador" />
         </Link>
