@@ -74,12 +74,8 @@ function Home() {
             <div style={{ minWidth: '280px', maxWidth: '300px', cursor: 'pointer' }}>
               <CardMaterial
                 title={offeredService.name}
-                avatarLetter={
-                  serviceProviders[offeredService.serviceProviderId]
-                    ? serviceProviders[offeredService.serviceProviderId].name[0]
-                    : offeredService.name[0] || 'N'
-                }
-                image={`data:image/jpeg;base64,${serviceProviders[offeredService.serviceProviderId]?.image}`}
+                avatarImage={`data:image/jpeg;base64,${serviceProviders[offeredService.serviceProviderId]?.image}`}
+                image={`data:image/jpeg;base64,${offeredService.image}`}
                 experience={serviceProviders[offeredService.serviceProviderId]?.experience}
                 nameProvider={
                   serviceProviders[offeredService.serviceProviderId]?.name || 'Prestador não encontrado'
