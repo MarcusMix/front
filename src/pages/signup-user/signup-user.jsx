@@ -5,10 +5,11 @@ import Button from '../../components/button/button';
 import Title from '../../components/title/Title';
 import FormBox from '../../components/form-box/FormBox';
 import FormContainer from '../../components/form-container/FormContainer';
-import getDataFunction from '../../api/api'; 
+import getDataFunction from '../../api/register_user'; 
 import Subtitle from '../../components/subtitle/Subtitle';
 import { toast } from 'react-hot-toast'; 
 import userAPI from '../../api/user';
+import registerUser from '../../api/register_user';
 
 const SignUpUser = () => {
   const [userData, setUserData] = useState({
@@ -47,7 +48,7 @@ const SignUpUser = () => {
     }
   
     try {
-      const addressResponse = await getDataFunction('address', 'POST', addressData);
+      const addressResponse = await registerUser('address', 'POST', addressData);
       
       if (addressResponse && addressResponse.id) {
         console.log('Address data saved successfully:', addressResponse);
@@ -67,7 +68,7 @@ const SignUpUser = () => {
         if (userResponse == undefined) {
           toast.success('Usuário cadastrado com sucesso!');
           setTimeout(() => {
-            window.location.href = '/'; 
+            window.location.href = '/login'; 
           }, 2000);
         } else {
           toast.error('Usuário cadastrado, mas a resposta não foi recebida corretamente.');

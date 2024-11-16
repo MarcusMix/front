@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import './login.css';
 import Input from '../../components/input/input';
 import Button from '../../components/button/button';
-import getDataFunction from '../../api/api';
-
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import loginUser from '../../api/login';
 
 
 const Login = () => {
@@ -18,7 +17,7 @@ const Login = () => {
     event.preventDefault();
   
     try {
-      const response = await getDataFunction("auth/login", "POST", JSON.stringify({ email, password }));
+      const response = await loginUser("auth/login", "POST", JSON.stringify({ email, password }));
       
       if (response) { 
         console.log("ok");
