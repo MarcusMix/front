@@ -74,6 +74,7 @@ function Home() {
             <div style={{ minWidth: '280px', maxWidth: '300px', cursor: 'pointer' }}>
               <CardMaterial
                 title={offeredService.name}
+                serviceProviderId={offeredService.serviceProviderId} 
                 avatarImage={`data:image/jpeg;base64,${serviceProviders[offeredService.serviceProviderId]?.image}`}
                 image={`data:image/jpeg;base64,${offeredService.image}`}
                 experience={serviceProviders[offeredService.serviceProviderId]?.experience}
