@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './login.css';
 import Input from '../../components/input/input';
 import Button from '../../components/button/button';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import loginUser from '../../api/login';
+import { AuthContext } from '../../context/context';
 
 
 const Login = () => {
@@ -12,6 +13,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
   
   const handleLoginUser = async (event) => {
     event.preventDefault();
@@ -20,7 +22,9 @@ const Login = () => {
       const response = await loginUser("auth/login", "POST", JSON.stringify({ email, password }));
       
       if (response) { 
-        console.log("ok");
+        //login auth context
+        login(response)
+        
         localStorage.setItem("token", response); 
         toast.success('Login realizado com sucesso!');
         navigate('/');

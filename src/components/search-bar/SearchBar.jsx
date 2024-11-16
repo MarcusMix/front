@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import { Link } from 'react-router-dom'; // Importando o Link
 import AppBar from '@mui/material/AppBar';
@@ -14,6 +14,9 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import {AuthContext} from '../../context/context'
+import { toast } from 'react-hot-toast';
+// import Button from '../../components/button/button'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -76,6 +79,8 @@ const CepInput = styled(TextField)(({ theme }) => ({
 }));
 
 export default function SearchAppBar({ onSearch }) {
+  const { user, logout } = useContext(AuthContext);
+
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [cep, setCep] = useState(''); // Estado para armazenar o CEP
   const [searchTerm, setSearchTerm] = useState('');
@@ -177,11 +182,18 @@ export default function SearchAppBar({ onSearch }) {
     setAnchorElUser(null);
   };
 
+  const handleMenuClick = (action) => {
+    setAnchorElUser(null); // Fecha o menu
+    if (action === 'logout') {
+      toast.success('Logout realizado!')
+      logout(); // Realiza o logout usando o contexto
+    }
+  };
+
   const settings = [
     { name: 'Profile', path: '/profile' }, // Adicionando a rota
-    'Account',
-    'Dashboard',
-    'Logout',
+    {name: 'Provider profile', path: '/provider-profile'},
+    { name: 'Logout', action: 'logout' },
   ];
 
   return (
@@ -252,30 +264,47 @@ export default function SearchAppBar({ onSearch }) {
             <SearchIcon />
           </Button>
 
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
-            </IconButton>
-            <Menu
-              sx={{ mt: '45px' }}
-              anchorEl={anchorElUser}
-              keepMounted
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting.name || setting} onClick={handleCloseUserMenu}>
-                  {setting.path ? (
-                    <Link to={setting.path} style={{ textDecoration: 'none', color: 'inherit' }}>
-                      <Typography textAlign="center">{setting.name}</Typography>
-                    </Link>
+          {user ? (
+
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+              </IconButton>
+
+              <Menu
+                sx={{ mt: '45px' }}
+                anchorEl={anchorElUser}
+                keepMounted
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {settings.map((setting) =>
+                  setting.path ? (
+                    <MenuItem key={setting.name} onClick={handleCloseUserMenu}>
+                      <Link to={setting.path} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <Typography textAlign="center">{setting.name}</Typography>
+                      </Link>
+                    </MenuItem>
                   ) : (
-                    <Typography textAlign="center">{setting}</Typography>
-                  )}
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+                    <MenuItem key={setting.name} onClick={() => handleMenuClick(setting.action)}>
+                      <Typography textAlign="center">{setting.name}</Typography>
+                    </MenuItem>
+                  )
+                )}
+              </Menu>
+              </Box>
+
+          ): (
+            <div className="div">
+              <Link to="/login">
+                <Button variant="contained">Login</Button>
+              </Link>
+              <Link to="/signup-user">
+              <Button variant="contained">Register</Button>
+            </Link>
+            </div>
+          )}
+          
         </Toolbar>
       </AppBar>
     </Box>
