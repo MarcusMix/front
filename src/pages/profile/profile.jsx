@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import Button from '../../components/button/button';
-import { Box, Container, CircularProgress, Typography, Card, CardContent } from '@mui/material';
+import { Box, Container, CircularProgress, Typography, Card, CardContent, CardMedia, Avatar } from '@mui/material'; // Adicionado CardMedia e Avatar
 import TitleNew from '../../components/title/Title';
 import { Link } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
+import Rating from '@mui/material/Rating'; // Importa o componente de estrelas
+import { toast } from 'react-hot-toast'; 
+import './profile.css'; // Certifique-se de criar ou editar este arquivo para incluir as classes de estilo
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [serviceOrders, setServiceOrders] = useState([]); // Armazena as service orders
   const [serviceProviders, setServiceProviders] = useState({}); // Armazena os prestadores de serviço
+  const [offeredServices, setOfferedServices] = useState({}); // Armazena os serviços oferecidos
   const [loadingOrders, setLoadingOrders] = useState(true); // Controla o carregamento
-  const [isServiceProvider, setIsServiceProvider] = useState(false);
+  const [isServiceProvider, setIsServiceProvider] = useState(false); // Indica se o usuário já é um prestador
 
   const token = localStorage.getItem('token');
 
@@ -55,6 +59,37 @@ const Profile = () => {
   }, [loggedInUsername, token]);
 
   useEffect(() => {
+    // Verifica se o usuário já tem um perfil de prestador de serviço
+    const checkIfServiceProvider = async () => {
+      if (!userInfo || !userInfo.id) return;
+
+      try {
+        const response = await fetch(
+          `http://localhost:8080/service-provider/user/${userInfo.id}`, // Endpoint para buscar o prestador pelo ID do usuário
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          setIsServiceProvider(true); // Se o perfil existe, atualiza o estado
+        } else if (response.status === 404) {
+          setIsServiceProvider(false); // Se o perfil não existe, atualiza o estado para falso
+        } else {
+          throw new Error(`Erro ao verificar o perfil de prestador: ${response.status}`);
+        }
+      } catch (error) {
+        console.error('Erro ao verificar se o usuário é prestador de serviço:', error);
+      }
+    };
+
+    checkIfServiceProvider();
+  }, [userInfo, token]);
+
+  useEffect(() => {
     // Busca as ordens de serviço
     const fetchServiceOrders = async () => {
       if (!userInfo || !userInfo.id) return;
@@ -87,9 +122,10 @@ const Profile = () => {
   }, [userInfo, token]);
 
   useEffect(() => {
-    // Busca os detalhes dos prestadores de serviço
-    const fetchServiceProviders = async () => {
+    // Busca os detalhes dos prestadores de serviço e dos serviços oferecidos
+    const fetchDetails = async () => {
       const uniqueProviderIds = [...new Set(serviceOrders.map((order) => order.serviceProviderId))];
+      const uniqueOfferedServiceIds = [...new Set(serviceOrders.map((order) => order.offeredServiceId))];
 
       for (const providerId of uniqueProviderIds) {
         if (!serviceProviders[providerId]) {
@@ -115,43 +151,59 @@ const Profile = () => {
           }
         }
       }
+
+      for (const serviceId of uniqueOfferedServiceIds) {
+        if (!offeredServices[serviceId]) {
+          try {
+            const response = await fetch(
+              `http://localhost:8080/offered-service/${serviceId}`,
+              {
+                method: 'GET',
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error(`Erro ao buscar o serviço oferecido: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setOfferedServices((prev) => ({ ...prev, [serviceId]: data }));
+          } catch (error) {
+            console.error('Erro ao buscar o serviço oferecido:', error);
+          }
+        }
+      }
     };
 
     if (serviceOrders.length > 0) {
-      fetchServiceProviders();
+      fetchDetails();
     }
   }, [serviceOrders, token]);
 
-  useEffect(() => {
-    const checkIfServiceProvider = async () => {
-      if (!userInfo || !userInfo.id) return;
-  
-      try {
-        const response = await fetch(
-          `http://localhost:8080/service-provider/user/${userInfo.id}`, // Endpoint para verificar o prestador
-          {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${token}`, // Inclui o token JWT
-            },
-          }
-        );
-  
-        if (response.ok) {
-          setIsServiceProvider(true); // Se o prestador existir, atualiza o estado
-        } else if (response.status === 404) {
-          setIsServiceProvider(false); // Se não existir, atualiza o estado para falso
-        } else {
-          throw new Error(`Erro na requisição: ${response.status}`);
-        }
-      } catch (error) {
-        console.error('Erro ao verificar se o usuário é prestador de serviço:', error);
+  const handleRatingChange = async (orderId, rating) => {
+    try {
+      const response = await fetch(`http://localhost:8080/service-order/${orderId}/rating`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(rating),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro ao atualizar a avaliação: ${response.status}`);
       }
-    };
-  
-    checkIfServiceProvider();
-  }, [userInfo, token]);
-  
+
+      toast.success('Avaliação atualizada com sucesso!');
+    } catch (error) {
+      console.error('Erro ao atualizar a avaliação:', error);
+      toast.error('Erro ao atualizar a avaliação. Tente novamente.');
+    }
+  };
 
   if (!userInfo) {
     return <CircularProgress />;
@@ -160,18 +212,16 @@ const Profile = () => {
   return (
     <Container maxWidth="sm">
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, padding: 2 }}>
-        <TitleNew>Bem-vindo {userInfo.name}, ao seu perfil!</TitleNew>
-        <p>E-mail da conta: {userInfo.email}</p>
-        <p>Cidade: {userInfo.addressDTO.city}</p>
-        <p>Estado: {userInfo.addressDTO.state}</p>
+        <TitleNew>Bem-vindo {userInfo.name}!</TitleNew>
+        <p className='pr'>E-mail da conta: {userInfo.email}</p>
+        <p className='pr'>Cidade: {userInfo.addressDTO.city}</p>
+        <p className='pr'>Estado: {userInfo.addressDTO.state}</p>
         {!isServiceProvider && (
           <Link to="/signup-service">
             <Button label="Criar Perfil de Prestador" />
           </Link>
         )}
 
-
-        {/* Exibe as service orders */}
         <Box>
           <TitleNew>Serviços Contratados</TitleNew>
           {loadingOrders ? (
@@ -179,24 +229,51 @@ const Profile = () => {
           ) : serviceOrders.length > 0 ? (
             serviceOrders.map((order) => {
               const serviceProvider = serviceProviders[order.serviceProviderId];
+              const offeredService = offeredServices[order.offeredServiceId];
+              const statusClass =
+                order.status === 'PENDING'
+                  ? 'status-pending'
+                  : order.status === 'FINISHED'
+                  ? 'status-finished'
+                  : 'status-accepted';
               return (
-                <Card key={order.id} sx={{ marginBottom: 2 }}>
+                <Card key={order.id} sx={{ marginBottom: 2, display: 'flex', alignItems: 'center' }}>
+                  <CardMedia
+                    component="img"
+                    sx={{ width: 100, height: 100, marginLeft: 2 }}
+                    image={offeredService?.image ? `data:image/jpeg;base64,${offeredService.image}` : '/default-service.png'}
+                    alt="Serviço"
+                  />
                   <CardContent>
                     <Typography variant="h6">
-                      Serviço: {order.offeredServiceId ? `Serviço ID ${order.offeredServiceId}` : 'Serviço não especificado'}
+                      {offeredService ? offeredService.name : 'Serviço não especificado'}
                     </Typography>
-                    <Typography>
-                      Prestador:{' '}
-                      {serviceProvider ? (
-                        <Link to={`/service-provider/${order.serviceProviderId}`}>
-                          {serviceProvider.name}
-                        </Link>
-                      ) : (
-                        'Carregando...'
-                      )}
-                    </Typography>
-                    <Typography>Status: {order.status}</Typography>
-                    <Typography>Avaliação: {order.rating || 'Não avaliado'}</Typography>
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <Avatar
+                        src={serviceProvider?.image ? `data:image/jpeg;base64,${serviceProvider.image}` : '/default-avatar.png'}
+                        alt="Prestador"
+                      />
+                      <Typography>
+                        {' '}
+                        {serviceProvider ? (
+                          <Link className="link-user" to={`/service-provider/${order.serviceProviderId}`}>
+                            {serviceProvider.name}
+                          </Link>
+                        ) : (
+                          'Carregando...'
+                        )}
+                      </Typography>
+                    </Box>
+                    <Typography className={statusClass}> {order.status}</Typography>
+                    {order.status === 'FINISHED' && (
+                      <Rating
+                        name={`rating-${order.id}`}
+                        value={order.rating || 0}
+                        onChange={(event, newValue) =>
+                          handleRatingChange(order.id, newValue)
+                        }
+                      />
+                    )}
                   </CardContent>
                 </Card>
               );

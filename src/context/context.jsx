@@ -5,13 +5,31 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); // Estado do usuário logado
 
+  // Função para buscar detalhes do usuário
+  const fetchUserDetails = async (email, token) => {
+    try {
+      const response = await fetch(`http://localhost:8080/user/by-email?email=${email}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Erro ao buscar detalhes do usuário: ${response.status}`);
+      }
+      const userData = await response.json();
+      setUser(userData); // Atualiza o estado com os detalhes completos
+    } catch (error) {
+      console.error('Erro ao buscar detalhes do usuário:', error);
+      setUser(null);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      // Decodificar o token ou buscar dados do usuário
       try {
-        const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodificar payload do JWT
-        setUser({ email: decodedToken.sub }); // Exemplo: extrair email do token
+        const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodifica o token
+        fetchUserDetails(decodedToken.sub, token); // Busca os detalhes do usuário
       } catch (error) {
         console.error('Erro ao decodificar token:', error);
         setUser(null);
@@ -21,8 +39,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = (token) => {
     localStorage.setItem('token', token);
-    const decodedToken = JSON.parse(atob(token.split('.')[1]));
-    setUser({ email: decodedToken.sub });
+    try {
+      const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodifica o token
+      fetchUserDetails(decodedToken.sub, token); // Busca os detalhes do usuário
+    } catch (error) {
+      console.error('Erro ao decodificar token durante login:', error);
+      setUser(null);
+    }
   };
 
   const logout = () => {
