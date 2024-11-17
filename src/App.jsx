@@ -19,6 +19,7 @@ function App() {
         <Route path="/service/:id" element={<ServiceDetails />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/provider-profile" element={<ProviderProfile />} />
+        <Route path="/service-provider/:id" element={<ProviderProfile />} />
       </Routes>
     </Router>
   );
