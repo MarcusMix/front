@@ -10,6 +10,8 @@ const Profile = () => {
   const [serviceOrders, setServiceOrders] = useState([]); // Armazena as service orders
   const [serviceProviders, setServiceProviders] = useState({}); // Armazena os prestadores de serviço
   const [loadingOrders, setLoadingOrders] = useState(true); // Controla o carregamento
+  const [isServiceProvider, setIsServiceProvider] = useState(false);
+
   const token = localStorage.getItem('token');
 
   let loggedInUsername = null;
@@ -120,6 +122,37 @@ const Profile = () => {
     }
   }, [serviceOrders, token]);
 
+  useEffect(() => {
+    const checkIfServiceProvider = async () => {
+      if (!userInfo || !userInfo.id) return;
+  
+      try {
+        const response = await fetch(
+          `http://localhost:8080/service-provider/user/${userInfo.id}`, // Endpoint para verificar o prestador
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`, // Inclui o token JWT
+            },
+          }
+        );
+  
+        if (response.ok) {
+          setIsServiceProvider(true); // Se o prestador existir, atualiza o estado
+        } else if (response.status === 404) {
+          setIsServiceProvider(false); // Se não existir, atualiza o estado para falso
+        } else {
+          throw new Error(`Erro na requisição: ${response.status}`);
+        }
+      } catch (error) {
+        console.error('Erro ao verificar se o usuário é prestador de serviço:', error);
+      }
+    };
+  
+    checkIfServiceProvider();
+  }, [userInfo, token]);
+  
+
   if (!userInfo) {
     return <CircularProgress />;
   }
@@ -131,9 +164,12 @@ const Profile = () => {
         <p>E-mail da conta: {userInfo.email}</p>
         <p>Cidade: {userInfo.addressDTO.city}</p>
         <p>Estado: {userInfo.addressDTO.state}</p>
-        <Link to="/signup-service">
-          <Button label="Criar Perfil de Prestador" />
-        </Link>
+        {!isServiceProvider && (
+          <Link to="/signup-service">
+            <Button label="Criar Perfil de Prestador" />
+          </Link>
+        )}
+
 
         {/* Exibe as service orders */}
         <Box>
