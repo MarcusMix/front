@@ -213,7 +213,7 @@ export default function SearchAppBar({ onSearch }) {
             aria-label="open drawer"
             sx={{ mr: 2 }}
           >
-            <MenuIcon />
+            {/* <MenuIcon />; */}
           </IconButton>
           <Typography
             variant="h6"
@@ -268,8 +268,19 @@ export default function SearchAppBar({ onSearch }) {
 
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
-              </IconButton>
+              <Avatar
+                alt={user?.name || 'User'}
+                src={user?.image ? `data:image/jpeg;base64,${user.image}` : null}
+                sx={{
+                  bgcolor: user?.image ? 'transparent' : '#FFC107', // Fundo colorido se não houver imagem
+                  color: '#fff', // Cor do texto
+                  width: 40,
+                  height: 40,
+                }}
+              >
+                {!user?.image && user?.name ? user.name[0] : ''}
+              </Avatar>
+            </IconButton>
 
               <Menu
                 sx={{ mt: '45px' }}
