@@ -4,6 +4,7 @@ import SearchAppBar from '../../components/search-bar/SearchBar';
 import getDataFunction from '../../api/api';
 import { Avatar, Card, CardContent, CardHeader, Grid, Typography } from '@mui/material';
 import { red } from '@mui/material/colors';
+import OfferedServiceCard from '../../components/offered-service-card/OfferedServiceCard'; // Importe o componente
 
 function ServiceProviderProfile() {
     const { id } = useParams();
@@ -58,18 +59,19 @@ function ServiceProviderProfile() {
                             title={providerData.name}
                             subheader={providerData.description}
                         />
-                        {/* <CardMedia
-              component="img"
-              height="194"
-              image={`data:image/jpeg;base64,${providerData.image}`} // Se tiver uma imagem de capa
-              alt={providerData.name}
-            /> */}
+
                         <CardContent>
                             <Typography variant="body2" color="text.secondary">
                                 Experiência: {providerData.experience}
                             </Typography>
 
-                            {/* Aqui entrará o componente de serviços posteriormente */}
+                            <Grid container spacing={2}> {/* Adicione o Grid container */}
+                                {providerData.offeredServices.map((service) => (
+                                    <Grid item xs={12} sm={6} md={4} key={service.id}> {/* Defina o tamanho do item */}
+                                        <OfferedServiceCard service={service} />
+                                    </Grid>
+                                ))}
+                            </Grid>
                         </CardContent>
                     </Card>
                 </Grid>
