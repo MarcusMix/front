@@ -18,7 +18,7 @@ function App() {
         <Route path="/signup-service" element={<SignUpService />} />
         <Route path="/service/:id" element={<ServiceDetails />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/provider-profile/:id" element={<ProviderProfile />} />
+        <Route path="/provider-profile" element={<ProviderProfile />} />
       </Routes>
     </Router>
   );

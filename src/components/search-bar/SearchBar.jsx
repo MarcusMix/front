@@ -192,7 +192,7 @@ export default function SearchAppBar({ onSearch }) {
 
   const settings = [
     { name: 'Profile', path: '/profile' }, // Adicionando a rota
-    {name: 'My Provider profile', path: '/my-provider-profile'},
+    {name: 'My Provider profile', path: '/provider-profile'},
     { name: 'Logout', action: 'logout' },
   ];
 
