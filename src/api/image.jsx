@@ -1,24 +1,23 @@
-export const sendImageBlob = async (url, method, data) => {
+export const sendImageBlob = async (url, method, data, token) => {
     try {
-        const response = await fetch(url, {
-            method: method,
-            body: data, // O FormData já está formatado corretamente
-            // Não adicione o cabeçalho Content-Type, pois o navegador irá configurá-lo
-        });
-
-        // Verifica se a resposta foi bem-sucedida
-        if (!response.ok) {
-            // Converte a resposta de erro em um objeto JSON
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Erro ao fazer a requisição');
-        }
-
-        // Para respostas JSON, converta e retorne os dados
-        const responseData = await response.json();
-        return responseData;
-
+      const response = await fetch(url, {
+        method: method,
+        body: data,
+        headers: {
+          Authorization: `Bearer ${token}`, // Adiciona o token no cabeçalho
+        },
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({})); // Evita erro ao processar resposta vazia
+        throw new Error(errorData.message || 'Erro ao fazer a requisição');
+      }
+  
+      const responseData = await response.json().catch(() => null); // Verifica se há JSON na resposta
+      return responseData;
     } catch (error) {
-        console.error('Erro na função getDataFunction:', error);
-        throw error; // Propaga o erro para que possa ser tratado no componente
+      console.error('Erro na função sendImageBlob:', error);
+      throw error;
     }
-};
+  };
+  
