@@ -1,25 +1,66 @@
-import React, { useState } from 'react';
-import './signup-service.css'; // Importar o CSS específico
+import React, { useState, useEffect } from 'react';
+import {jwtDecode} from 'jwt-decode';
+import './signup-service.css';
 import FormBox from '../../components/form-box/FormBox';
 import FormContainer from '../../components/form-container/FormContainer';
 import Button from '../../components/button/button';
 import Input from '../../components/input/input';
 import Subtitle from '../../components/subtitle/Subtitle';
 import TitleNew from '../../components/title/Title';
-import { toast } from 'react-hot-toast'; // Importando o toast
+import { toast } from 'react-hot-toast';
 import { sendImageBlob } from '../../api/image';
 
-const SignUpService = ({ userId }) => {
-  // Estado para os dados do prestador de serviço
+const SignUpService = () => {
   const [serviceProviderData, setServiceProviderData] = useState({
     name: '',
     description: '',
     experience: '',
-    userId: userId, // Agora isso será passado como uma prop
+    userId: '', // Será preenchido após buscar o userId
   });
-  const [imageFile, setImageFile] = useState(null); // Estado para armazenar o arquivo da imagem
+  const [imageFile, setImageFile] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
+  const token = localStorage.getItem('token');
 
-  // Manipulador de mudança para atualizar o estado
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      if (!token) {
+        toast.error('Usuário não autenticado.');
+        return;
+      }
+
+      try {
+        const decoded = jwtDecode(token);
+        const loggedInUsername = decoded.sub;
+
+        const response = await fetch(
+          `http://localhost:8080/user/by-email?email=${loggedInUsername}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Erro na requisição: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setUserInfo(data);
+        setServiceProviderData((prevData) => ({
+          ...prevData,
+          userId: data.id, // Preenche o userId no estado do formulário
+        }));
+      } catch (error) {
+        console.error('Erro ao buscar informações do usuário:', error);
+        toast.error('Erro ao carregar informações do usuário.');
+      }
+    };
+
+    fetchUserInfo();
+  }, [token]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setServiceProviderData((prevData) => ({
@@ -28,47 +69,41 @@ const SignUpService = ({ userId }) => {
     }));
   };
 
-  // Função para lidar com a mudança no input de arquivo
   const handleFileChange = (e) => {
     setImageFile(e.target.files[0]);
   };
 
-  // Função para lidar com a submissão do formulário
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Verificação de campos obrigatórios antes de enviar
     if (!serviceProviderData.name || !serviceProviderData.description || !serviceProviderData.experience || !imageFile || !serviceProviderData.userId) {
       toast.error('Todos os campos são obrigatórios.');
       return;
     }
 
-    // Cria um FormData para enviar os dados como multipart/form-data
     const formData = new FormData();
     formData.append('serviceProviderDTO', new Blob([JSON.stringify(serviceProviderData)], { type: 'application/json' }));
     formData.append('imageFile', imageFile);
 
-    // Log para depuração
-    console.log('Dados enviados:', serviceProviderData);
-    console.log('Arquivo de imagem:', imageFile);
-
     try {
-      const response = await sendImageBlob('http://localhost:8080/service-provider', 'POST', formData);
+      const response = await sendImageBlob('http://localhost:8080/service-provider', 'POST', formData, token);
 
       if (response) {
         toast.success('Prestador de serviço cadastrado com sucesso!');
-        // Limpar os campos do formulário
         setServiceProviderData({
           name: '',
           description: '',
           experience: '',
-          userId: userId, // Redefinindo conforme necessário
+          userId: userInfo?.id || '', // Restaura o userId do usuário logado
         });
-        setImageFile(null); // Limpa o campo de imagem
+        setImageFile(null);
+        setTimeout(() => {
+          window.location.href = '/'; 
+        }, 1000);
       }
     } catch (error) {
-      console.error('Error in handleSubmit:', error);
-      toast.error('Houve um erro ao cadastrar o prestador de serviço. Tente novamente.');
+      console.error('Erro ao cadastrar o prestador de serviço:', error);
+      toast.error('Erro ao cadastrar o prestador de serviço. Tente novamente.');
     }
   };
 
