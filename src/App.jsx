@@ -7,6 +7,7 @@ import SignUpUser from './pages/signup-user/signup-user';
 import SignUpService from './pages/signup-service/signup-service';
 import Profile from './pages/profile/profile';
 import ProviderProfile from './pages/providerProfile/providerProfile'; // Importe o componente
+import LoggedInServiceProviderProfile from './pages/LoggedInServiceProviderProfile/LoggedInServiceProviderProfile'; // Importe o componente
 
 function App() {
   return (
@@ -18,8 +19,8 @@ function App() {
         <Route path="/signup-service" element={<SignUpService />} />
         <Route path="/service/:id" element={<ServiceDetails />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/my-provider-profile" element={<ProviderProfile />} />
         <Route path="/provider-profile/:id" element={<ProviderProfile />} />
+        <Route path="/my-provider-profile" element={<LoggedInServiceProviderProfile />} />
       </Routes>
     </Router>
   );
