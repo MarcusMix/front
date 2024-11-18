@@ -2,16 +2,34 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Importe o useNavigate
 import SearchAppBar from '../../components/search-bar/SearchBar';
 import getDataFunction from '../../api/api';
-import { Avatar, Card, CardContent, CardHeader, Grid, Typography, Button } from '@mui/material';
+import { Avatar, Card, CardContent, CardHeader, Grid, Typography, Button, Modal, Box } from '@mui/material';
 import { red } from '@mui/material/colors';
 import OfferedServiceCard from '../../components/offered-service-card/OfferedServiceCard';
 import { jwtDecode } from 'jwt-decode';
+import OfferedServiceForm from '../../components/OfferedServiceForm/OfferedServiceForm';
 
 function LoggedInServiceProviderProfile() {
     const navigate = useNavigate(); // Inicialize o useNavigate
     const [providerData, setProviderData] = useState(null);
     const [loading, setLoading] = useState(true);
     const token = localStorage.getItem('token');
+    const [showServiceForm, setShowServiceForm] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
+
+    const handleOpenModal = () => setOpenModal(true);
+    const handleCloseModal = () => setOpenModal(false);
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+    };
 
     let loggedInUserId = null;
 
@@ -105,9 +123,28 @@ function LoggedInServiceProviderProfile() {
                             </Grid>
                         </CardContent>
 
-                        <Button variant="contained" color="primary">
+                        <Button variant="contained" color="primary" onClick={handleOpenModal}>
                             Criar Novo Serviço
                         </Button>
+
+                        <Modal
+                            open={openModal}
+                            onClose={handleCloseModal}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                        >
+                            <Box sx={style}>
+                                {/* Estilo do modal */}
+                                <Typography id="modal-modal-title" variant="h6" component="h2">
+                                    Criar Novo Serviço
+                                </Typography>
+                                <OfferedServiceForm
+                                    providerId={providerData.id}
+                                    onClose={handleCloseModal}
+                                />
+                                <Button onClick={handleCloseModal}>Fechar</Button>
+                            </Box>
+                        </Modal>
                     </Card>
                 </Grid>
             </Grid>
