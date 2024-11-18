@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { Button } from "@mui/material"; // Importe o Button do Material-UI
 import Input from "../../components/input/input";
-import { jwtDecode } from 'jwt-decode'; // Importe a função jwtDecode
+import { sendImageBlob } from "../../api/image"; // Função específica para enviar blobs de imagem
+import { toast } from "react-hot-toast"; // Importe o toast
 
 const OfferedServiceForm = ({ providerId, onClose }) => {
-    // Recebe o ID do provider e a função para fechar o modal
-
     const [serviceData, setServiceData] = useState({
         name: '',
         description: '',
@@ -32,33 +31,42 @@ const OfferedServiceForm = ({ providerId, onClose }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!serviceData.name || !serviceData.description || serviceData.price <= 0 || !serviceData.image) {
+            toast.error("Todos os campos são obrigatórios.");
+            return;
+        }
+
         const token = localStorage.getItem('token'); // Obter o token do localStorage
 
         const formData = new FormData();
-        formData.append('offeredServiceDTO', new Blob([JSON.stringify(serviceData)], { type: 'application/json' })); // Serializa o objeto serviceData como JSON
-        formData.append('imageFile', serviceData.image); // Adiciona a imagem
+        formData.append('offeredServiceDTO', new Blob([JSON.stringify({
+            name: serviceData.name,
+            description: serviceData.description,
+            price: serviceData.price,
+            serviceProviderId: serviceData.serviceProviderId
+        })], { type: 'application/json' }));
+        formData.append('imageFile', serviceData.image);
 
         try {
-            const response = await fetch('http://localhost:8080/offered-service', {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${token}`, // Incluir o token no header
-                },
-                body: formData,
-            });
+            const response = await sendImageBlob(
+                'http://localhost:8080/offered-service',
+                'POST',
+                formData,
+                token
+            );
 
-            if (response.ok) {
-                // Sucesso: mostrar mensagem e atualizar a página
-                alert("Serviço criado com sucesso!"); // Você pode usar uma biblioteca como o 'react-hot-toast' para mensagens mais personalizadas
+            if (response) {
+                toast.success("Serviço criado com sucesso!"); // Sucesso
                 onClose(); // Fecha o modal
-                window.location.reload(); // Recarrega a página
+                setTimeout(() => {
+                    window.location.reload(); // Recarrega a página
+                }, 1000); // Aguarda um segundo para exibir o toast antes de recarregar
             } else {
-                // Erro: mostrar mensagem de erro
-                alert("Erro ao criar serviço.");
+                toast.error("Erro ao criar serviço.");
             }
         } catch (error) {
             console.error("Erro ao criar serviço:", error);
-            alert("Erro ao criar serviço.");
+            toast.error("Erro ao criar serviço. Tente novamente.");
         }
     };
 
