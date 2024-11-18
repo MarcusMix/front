@@ -5,7 +5,7 @@ import TitleNew from '../../components/title/Title';
 import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import Rating from '@mui/material/Rating'; // Importa o componente de estrelas
-import { toast } from 'react-hot-toast'; 
+import { toast } from 'react-hot-toast';
 import './profile.css'; // Certifique-se de criar ou editar este arquivo para incluir as classes de estilo
 
 const Profile = () => {
@@ -234,8 +234,8 @@ const Profile = () => {
                 order.status === 'PENDING'
                   ? 'status-pending'
                   : order.status === 'FINISHED'
-                  ? 'status-finished'
-                  : 'status-accepted';
+                    ? 'status-finished'
+                    : 'status-accepted';
               return (
                 <Card key={order.id} sx={{ marginBottom: 2, display: 'flex', alignItems: 'center' }}>
                   <CardMedia
@@ -256,7 +256,7 @@ const Profile = () => {
                       <Typography>
                         {' '}
                         {serviceProvider ? (
-                          <Link className="link-user" to={`/service-provider/${order.serviceProviderId}`}>
+                          <Link className="link-user" to={`/provider-profile/${order.serviceProviderId}`}>
                             {serviceProvider.name}
                           </Link>
                         ) : (
