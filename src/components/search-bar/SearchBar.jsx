@@ -14,7 +14,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import {AuthContext} from '../../context/context'
+import { AuthContext } from '../../context/context'
 import { toast } from 'react-hot-toast';
 // import Button from '../../components/button/button'
 
@@ -192,7 +192,7 @@ export default function SearchAppBar({ onSearch }) {
 
   const settings = [
     { name: 'Profile', path: '/profile' }, // Adicionando a rota
-    {name: 'My Provider profile', path: '/provider-profile'},
+    { name: 'My Provider profile', path: '/my-provider-profile' },
     { name: 'Logout', action: 'logout' },
   ];
 
@@ -266,21 +266,21 @@ export default function SearchAppBar({ onSearch }) {
 
           {user ? (
 
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <Avatar
-                alt={user?.name || 'User'}
-                src={user?.image ? `data:image/jpeg;base64,${user.image}` : null}
-                sx={{
-                  bgcolor: user?.image ? 'transparent' : '#FFC107', // Fundo colorido se não houver imagem
-                  color: '#fff', // Cor do texto
-                  width: 40,
-                  height: 40,
-                }}
-              >
-                {!user?.image && user?.name ? user.name[0] : ''}
-              </Avatar>
-            </IconButton>
+                <Avatar
+                  alt={user?.name || 'User'}
+                  src={user?.image ? `data:image/jpeg;base64,${user.image}` : null}
+                  sx={{
+                    bgcolor: user?.image ? 'transparent' : '#FFC107', // Fundo colorido se não houver imagem
+                    color: '#fff', // Cor do texto
+                    width: 40,
+                    height: 40,
+                  }}
+                >
+                  {!user?.image && user?.name ? user.name[0] : ''}
+                </Avatar>
+              </IconButton>
 
               <Menu
                 sx={{ mt: '45px' }}
@@ -303,19 +303,19 @@ export default function SearchAppBar({ onSearch }) {
                   )
                 )}
               </Menu>
-              </Box>
+            </Box>
 
-          ): (
+          ) : (
             <div className="div">
               <Link to="/login">
                 <Button variant="contained">Login</Button>
               </Link>
               <Link to="/signup-user">
-              <Button variant="contained">Register</Button>
-            </Link>
+                <Button variant="contained">Register</Button>
+              </Link>
             </div>
           )}
-          
+
         </Toolbar>
       </AppBar>
     </Box>
