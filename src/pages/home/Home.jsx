@@ -1,3 +1,4 @@
+
 import { Typography, Grid } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Importa o useNavigate
@@ -30,7 +31,7 @@ function Home() {
 
       const providers = await Promise.all(providerDataPromises);
       const providerMap = Object.assign({}, ...providers.filter(Boolean)); // Filtra valores nulos
-      setServiceProviders(providerMap);  // Armazena os dados dos prestadores por ID
+      setServiceProviders(providerMap); // Armazena os dados dos prestadores por ID
     } catch (error) {
       console.error('Erro ao buscar dados do prestador de serviço:', error);
     } finally {
@@ -42,9 +43,9 @@ function Home() {
     fetchOfferedService();
   }, []);
 
-  const handleCardClick = (id) => {
-    // Navega para a página de detalhes passando o ID do prestador de serviço
-    navigate(`/service/${id}`);
+  const handleCardClick = (offeredServiceId) => {
+    // Navega para a página de detalhes do serviço utilizando o ID correto
+    navigate(`/service/${offeredServiceId}`);
   };
 
   const handleSearch = (results) => {
@@ -54,10 +55,6 @@ function Home() {
   if (loading) {
     return <Typography>Carregando...</Typography>;
   }
-
-  // if (offeredServices.length === 0) {
-  //   return <Typography>Erro: Nenhum prestador de serviço encontrado.</Typography>;
-  // }
 
   return (
     <div>
@@ -69,12 +66,12 @@ function Home() {
           <Grid
             item
             key={offeredService.id}
-            onClick={() => handleCardClick(offeredService.serviceProviderId)} // Adiciona o clique no card
+            onClick={() => handleCardClick(offeredService.id)} // Passa o ID do serviço
           >
             <div style={{ minWidth: '280px', maxWidth: '300px', cursor: 'pointer' }}>
               <CardMaterial
                 title={offeredService.name}
-                serviceProviderId={offeredService.serviceProviderId} 
+                serviceProviderId={offeredService.serviceProviderId}
                 avatarImage={`data:image/jpeg;base64,${serviceProviders[offeredService.serviceProviderId]?.image}`}
                 image={`data:image/jpeg;base64,${offeredService.image}`}
                 experience={serviceProviders[offeredService.serviceProviderId]?.experience}
