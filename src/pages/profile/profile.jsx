@@ -7,6 +7,7 @@ import { jwtDecode } from 'jwt-decode';
 import Rating from '@mui/material/Rating'; // Importa o componente de estrelas
 import { toast } from 'react-hot-toast';
 import './profile.css'; // Certifique-se de criar ou editar este arquivo para incluir as classes de estilo
+import SearchAppBar from "../../components/search-bar/SearchBar";
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState(null);
@@ -17,6 +18,12 @@ const Profile = () => {
   const [isServiceProvider, setIsServiceProvider] = useState(false); // Indica se o usuário já é um prestador
 
   const token = localStorage.getItem('token');
+
+  const statusMap = {
+    PENDING: 'PENDENTE',
+    FINISHED: 'FINALIZADO',
+    ACCEPTED: 'ACEITO',
+  };
 
   let loggedInUsername = null;
 
@@ -199,6 +206,10 @@ const Profile = () => {
       }
 
       toast.success('Avaliação atualizada com sucesso!');
+      setTimeout(() => {
+
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       console.error('Erro ao atualizar a avaliação:', error);
       toast.error('Erro ao atualizar a avaliação. Tente novamente.');
@@ -211,6 +222,7 @@ const Profile = () => {
 
   return (
     <Container maxWidth="sm">
+      <SearchAppBar />
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, padding: 2 }}>
         <TitleNew>Bem-vindo {userInfo.name}!</TitleNew>
         <p className='pr'>E-mail da conta: {userInfo.email}</p>
@@ -264,14 +276,19 @@ const Profile = () => {
                         )}
                       </Typography>
                     </Box>
-                    <Typography className={statusClass}> {order.status}</Typography>
+                    <Typography className={statusClass}>{statusMap[order.status] || order.status}</Typography>
                     {order.status === 'FINISHED' && (
                       <Rating
                         name={`rating-${order.id}`}
                         value={order.rating || 0}
-                        onChange={(event, newValue) =>
-                          handleRatingChange(order.id, newValue)
-                        }
+                        readOnly={order.rating !== null} // Se já tiver avaliação, torna somente leitura
+                        onChange={(event, newValue) => {
+                          if (order.rating === null) { // Permite apenas se ainda não foi avaliado
+                            handleRatingChange(order.id, newValue);
+                          } else {
+                            toast.error('Você já avaliou este serviço.');
+                          }
+                        }}
                       />
                     )}
                   </CardContent>
