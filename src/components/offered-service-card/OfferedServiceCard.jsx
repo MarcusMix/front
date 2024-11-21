@@ -3,7 +3,7 @@ import { Card, CardContent, CardMedia, Typography, Button } from '@mui/material'
 import axios from 'axios'; // Importe o axios
 import { jwtDecode } from 'jwt-decode'; // Importe a biblioteca
 
-function OfferedServiceCard({ service }) {
+function OfferedServiceCard({ service, isServiceProvider, onEdit }) {
     const { name, description, price, image } = service;
 
     const handleHireService = async () => {
@@ -32,6 +32,28 @@ function OfferedServiceCard({ service }) {
         }
     };
 
+    const handleEditService = () => {
+        onEdit(service);
+    };
+
+    const handleDeleteService = async () => {
+        if (window.confirm('Tem certeza que deseja excluir este serviço?')) {
+            try {
+                const token = localStorage.getItem('token');
+                await axios.delete(`http://localhost:8080/offered-service/${service.id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                // Atualizar a lista de serviços ou recarregar a página
+                window.location.reload();
+            } catch (error) {
+                console.error('Erro ao excluir serviço:', error);
+                alert('Erro ao excluir serviço. Por favor, tente novamente.');
+            }
+        }
+    };
+
     return (
         <Card>
             <CardContent>
@@ -53,9 +75,20 @@ function OfferedServiceCard({ service }) {
                     Preço: R$ {price}
                 </Typography>
             </CardContent>
-            <Button variant="contained" fullWidth onClick={handleHireService}> {/* Adicione o onClick */}
-                Contratar Serviço
-            </Button>
+            {isServiceProvider ? (
+                <div>
+                    <Button variant="outlined" color="primary" onClick={handleEditService}>
+                        Editar Serviço
+                    </Button>
+                    <Button variant="outlined" color="error" onClick={handleDeleteService}>
+                        Excluir Serviço
+                    </Button>
+                </div>
+            ) : (
+                <Button variant="contained" fullWidth onClick={handleHireService}>
+                    Contratar Serviço
+                </Button>
+            )}
         </Card>
     );
 }
