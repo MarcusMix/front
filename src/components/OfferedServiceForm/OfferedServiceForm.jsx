@@ -4,13 +4,14 @@ import Input from "../../components/input/input";
 import { sendImageBlob } from "../../api/image"; // Função específica para enviar blobs de imagem
 import { toast } from "react-hot-toast"; // Importe o toast
 
-const OfferedServiceForm = ({ providerId, onClose }) => {
+const OfferedServiceForm = ({ providerId, onClose, serviceToEdit }) => {
+
     const [serviceData, setServiceData] = useState({
-        name: '',
-        description: '',
-        price: 0,
-        serviceProviderId: providerId, // ID do prestador recebido como prop
-        image: null
+        name: serviceToEdit?.name || '',
+        description: serviceToEdit?.description || '',
+        price: serviceToEdit?.price || 0,
+        serviceProviderId: providerId,
+        image: null // A imagem não será preenchida inicialmente
     });
 
     const handleChange = (e) => {
@@ -48,12 +49,22 @@ const OfferedServiceForm = ({ providerId, onClose }) => {
         formData.append('imageFile', serviceData.image);
 
         try {
-            const response = await sendImageBlob(
-                'http://localhost:8080/offered-service',
-                'POST',
-                formData,
-                token
-            );
+            let response;
+            if (serviceToEdit) { // Modo de edição
+                response = await sendImageBlob(
+                    `http://localhost:8080/offered-service/${serviceToEdit.id}`, // Endpoint para editar, incluindo o ID do serviço
+                    'PUT', // Método PUT para editar
+                    formData,
+                    token
+                );
+            } else { // Modo de criação
+                response = await sendImageBlob(
+                    'http://localhost:8080/offered-service',
+                    'POST',
+                    formData,
+                    token
+                );
+            }
 
             if (response) {
                 toast.success("Serviço criado com sucesso!"); // Sucesso

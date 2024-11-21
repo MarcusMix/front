@@ -16,8 +16,19 @@ function LoggedInServiceProviderProfile() {
     const [showServiceForm, setShowServiceForm] = useState(false);
     const [openModal, setOpenModal] = useState(false);
 
-    const handleOpenModal = () => setOpenModal(true);
+    const handleOpenModal = () => {
+        setServiceToEdit(null); // Reinicializa serviceToEdit para o modo de criação
+        setOpenModal(true);
+    };
     const handleCloseModal = () => setOpenModal(false);
+
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [serviceToEdit, setServiceToEdit] = useState(null);
+
+    const handleEditService = (service) => {
+        setServiceToEdit(service);
+        setOpenModal(true); // Abre o modal principal
+    };
 
     const style = {
         position: 'absolute',
@@ -117,7 +128,11 @@ function LoggedInServiceProviderProfile() {
                             <Grid container spacing={2}>
                                 {providerData.offeredServices.map((service) => (
                                     <Grid item xs={12} sm={6} md={4} key={service.id}>
-                                        <OfferedServiceCard service={service} />
+                                        <OfferedServiceCard
+                                            service={service}
+                                            isServiceProvider={true}
+                                            onEdit={handleEditService}
+                                        />
                                     </Grid>
                                 ))}
                             </Grid>
@@ -134,12 +149,12 @@ function LoggedInServiceProviderProfile() {
                             aria-describedby="modal-modal-description"
                         >
                             <Box sx={style}>
-                                {/* Estilo do modal */}
                                 <Typography id="modal-modal-title" variant="h6" component="h2">
-                                    Criar Novo Serviço
+                                    {serviceToEdit ? 'Editar Serviço' : 'Criar Novo Serviço'} {/* Título dinâmico */}
                                 </Typography>
                                 <OfferedServiceForm
                                     providerId={providerData.id}
+                                    serviceToEdit={serviceToEdit}
                                     onClose={handleCloseModal}
                                 />
                                 <Button onClick={handleCloseModal}>Fechar</Button>
