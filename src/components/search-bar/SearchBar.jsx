@@ -14,9 +14,11 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import "./SearchBar.css"
+
 import { AuthContext } from '../../context/context'
 import { toast } from 'react-hot-toast';
-// import Button from '../../components/button/button'
+import MyButton from '../../components/button/button'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -202,7 +204,10 @@ export default function SearchAppBar({ onSearch }) {
         position="fixed"
         sx={{
           width: '100%',
-          backgroundColor: '#FFC107',
+          backgroundColor: '#61C9A8',
+          // #2D2A32 amarelo
+          // #61C9A8 mint
+          // #2D2A32 preto
         }}
       >
         <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -221,7 +226,9 @@ export default function SearchAppBar({ onSearch }) {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
           >
-            Marketplace do Job
+            <Link to="/" style={{ textDecoration: 'none' }} className="link-main">
+              Marketplace do Job
+            </Link>
           </Typography>
 
           <CepInput // Novo campo de CEP
@@ -236,7 +243,7 @@ export default function SearchAppBar({ onSearch }) {
             }}
           />
 
-          <Search sx={{ mx: 2 }}>
+          <Search sx={{ mx: 1 }}>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
@@ -253,11 +260,11 @@ export default function SearchAppBar({ onSearch }) {
             color="primary"
             onClick={handleSearch} // Adicionar onClick
             sx={{
-              marginLeft: 2,
+              margin: 2,
               borderRadius: 2,
-              backgroundColor: '#388E3C',
+              backgroundColor: '#33CA7F',
               '&:hover': {
-                backgroundColor: '#2E7D32',
+                backgroundColor: '#2CA568',
               }
             }}
           >
@@ -272,7 +279,7 @@ export default function SearchAppBar({ onSearch }) {
                   alt={user?.name || 'User'}
                   src={user?.image ? `data:image/jpeg;base64,${user.image}` : null}
                   sx={{
-                    bgcolor: user?.image ? 'transparent' : '#FFC107', // Fundo colorido se não houver imagem
+                    bgcolor: user?.image ? 'transparent' : '#FCCA46', // Fundo colorido se não houver imagem
                     color: '#fff', // Cor do texto
                     width: 40,
                     height: 40,
@@ -283,7 +290,7 @@ export default function SearchAppBar({ onSearch }) {
               </IconButton>
 
               <Menu
-                sx={{ mt: '45px' }}
+                sx={{ mt: '15px' }}
                 anchorEl={anchorElUser}
                 keepMounted
                 open={Boolean(anchorElUser)}
@@ -306,12 +313,12 @@ export default function SearchAppBar({ onSearch }) {
             </Box>
 
           ) : (
-            <div className="div">
-              <Link to="/login">
-                <Button variant="contained">Login</Button>
+            <div className="div-button">
+              <Link to="/login" style={{ textDecoration: 'none' }} className="link-search">
+                <MyButton type="button" label="Login" onClick={() => console.log('Login button clicked')} />
               </Link>
-              <Link to="/signup-user">
-                <Button variant="contained">Register</Button>
+              <Link to="/signup-user" style={{ textDecoration: 'none' }} className="link-search">
+                <MyButton type="button" label="Register" onClick={() => console.log('Register button clicked')} />
               </Link>
             </div>
           )}

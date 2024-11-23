@@ -2,7 +2,7 @@
 import React from 'react';
 import './button.css'; // Se você quiser adicionar estilos personalizados de botão
 
-const Button = ({ type, label, onClick }) => {
+const MyButton = ({ type, label, onClick }) => {
   return (
     <button type={type} className="button" onClick={onClick}>
       {label}
@@ -10,4 +10,4 @@ const Button = ({ type, label, onClick }) => {
   );
 };
 
-export default Button;
+export default MyButton;

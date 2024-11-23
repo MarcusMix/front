@@ -5,11 +5,13 @@
   overflow: hidden;
   border-radius: 16px;
   color: #010101;
-  margin: auto; /* Centraliza horizontalmente */
+  margin: auto;
+  /* Centraliza horizontalmente */
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* Centraliza verticalmente */
+  transform: translate(-50%, -50%);
+  /* Centraliza verticalmente */
 }
 
 /* Estilização do formulário */
@@ -26,6 +28,7 @@
 .title {
   font-weight: bold;
   font-size: 1.6rem;
+  color: #000;
 }
 
 /* Texto do subtítulo */
