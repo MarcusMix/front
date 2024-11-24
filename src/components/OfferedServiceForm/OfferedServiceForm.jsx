@@ -123,7 +123,7 @@ const OfferedServiceForm = ({ providerId, onClose, serviceToEdit }) => {
             <Button type="submit" variant="contained" color="primary">
                 Salvar Serviço
             </Button>
-            <Button type="button" variant="outlined" color="secondary" onClick={onClose}>
+            <Button type="button" variant="contained" color="error" onClick={onClose}>
                 Cancelar
             </Button>
         </form>

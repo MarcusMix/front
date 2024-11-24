@@ -120,6 +120,10 @@ function LoggedInServiceProviderProfile() {
                             subheader={providerData.description}
                         />
 
+                        <Button variant="contained" color="primary" onClick={handleOpenModal}>
+                            Criar Novo Serviço
+                        </Button>
+
                         <CardContent>
                             <Typography variant="body2" color="text.secondary">
                                 Experiência: {providerData.experience}
@@ -138,10 +142,6 @@ function LoggedInServiceProviderProfile() {
                             </Grid>
                         </CardContent>
 
-                        <Button variant="contained" color="primary" onClick={handleOpenModal}>
-                            Criar Novo Serviço
-                        </Button>
-
                         <Modal
                             open={openModal}
                             onClose={handleCloseModal}
@@ -157,7 +157,6 @@ function LoggedInServiceProviderProfile() {
                                     serviceToEdit={serviceToEdit}
                                     onClose={handleCloseModal}
                                 />
-                                <Button onClick={handleCloseModal}>Fechar</Button>
                             </Box>
                         </Modal>
                     </Card>
