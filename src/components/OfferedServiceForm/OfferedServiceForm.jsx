@@ -1,10 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material"; // Importe o Button do Material-UI
 import Input from "../../components/input/input";
 import { sendImageBlob } from "../../api/image"; // Função específica para enviar blobs de imagem
 import { toast } from "react-hot-toast"; // Importe o toast
 
 const OfferedServiceForm = ({ providerId, onClose, serviceToEdit }) => {
+
+    const [currentImageName, setCurrentImageName] = useState('');
+
+    useEffect(() => {
+        if (serviceToEdit) {
+            setCurrentImageName(serviceToEdit.image ? 'nome_do_arquivo.jpg' : ''); // Extraia o nome do arquivo da imagem
+        }
+    }, [serviceToEdit]);
 
     const [serviceData, setServiceData] = useState({
         name: serviceToEdit?.name || '',
@@ -32,7 +40,12 @@ const OfferedServiceForm = ({ providerId, onClose, serviceToEdit }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!serviceData.name || !serviceData.description || serviceData.price <= 0 || !serviceData.image) {
+        if (
+            !serviceData.name ||
+            !serviceData.description ||
+            serviceData.price <= 0 ||
+            (!serviceToEdit && !serviceData.image) // Imagem obrigatória apenas na criação
+        ) {
             toast.error("Todos os campos são obrigatórios.");
             return;
         }
@@ -46,7 +59,9 @@ const OfferedServiceForm = ({ providerId, onClose, serviceToEdit }) => {
             price: serviceData.price,
             serviceProviderId: serviceData.serviceProviderId
         })], { type: 'application/json' }));
-        formData.append('imageFile', serviceData.image);
+        if (serviceData.image && serviceData.image.name !== currentImageName) {
+            formData.append('imageFile', serviceData.image);
+        }
 
         try {
             let response;
