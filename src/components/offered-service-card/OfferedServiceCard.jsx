@@ -2,6 +2,8 @@ import React from 'react';
 import { Card, CardContent, CardMedia, Typography, Button } from '@mui/material';
 import axios from 'axios'; // Importe o axios
 import { jwtDecode } from 'jwt-decode'; // Importe a biblioteca
+import { toast } from 'react-hot-toast';
+import './OfferedServiceCard.css'
 
 function OfferedServiceCard({ service, isServiceProvider, onEdit }) {
     const { name, description, price, image } = service;
@@ -25,7 +27,7 @@ function OfferedServiceCard({ service, isServiceProvider, onEdit }) {
                 },
             });
 
-            alert('Serviço contratado com sucesso!');
+            toast.success('Serviço contratado com sucesso!');
         } catch (error) {
             console.error('Erro ao contratar serviço:', error);
             alert('Erro ao contratar serviço. Por favor, tente novamente.');
@@ -45,11 +47,11 @@ function OfferedServiceCard({ service, isServiceProvider, onEdit }) {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                // Atualizar a lista de serviços ou recarregar a página
+                toast.success('Serviço excluído com sucesso!'); // Mensagem de sucesso
                 window.location.reload();
             } catch (error) {
                 console.error('Erro ao excluir serviço:', error);
-                alert('Erro ao excluir serviço. Por favor, tente novamente.');
+                toast.error('Erro ao excluir serviço. Por favor, tente novamente.'); // Mensagem de erro
             }
         }
     };
@@ -76,11 +78,11 @@ function OfferedServiceCard({ service, isServiceProvider, onEdit }) {
                 </Typography>
             </CardContent>
             {isServiceProvider ? (
-                <div>
-                    <Button variant="outlined" color="primary" onClick={handleEditService}>
+                <div className="buttons-container">
+                    <Button variant="contained" color="primary" onClick={handleEditService} className="edit-button">
                         Editar Serviço
                     </Button>
-                    <Button variant="outlined" color="error" onClick={handleDeleteService}>
+                    <Button variant="contained" color="error" onClick={handleDeleteService} className="delete-button">
                         Excluir Serviço
                     </Button>
                 </div>
