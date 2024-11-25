@@ -3,6 +3,7 @@ import { List, ListItem, ListItemText, Button, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import ServiceOrderItem from '../ServiceOrderItem/ServiceOrderItem';
+import SearchAppBar from '../search-bar/SearchBar';
 
 function ServiceOrders() {
     const navigate = useNavigate();
@@ -65,8 +66,15 @@ function ServiceOrders() {
         return <Typography variant="h5">Carregando ordens de serviço...</Typography>;
     }
 
+    const handleSearch = (results) => {
+        // Lógica para lidar com os resultados da busca
+    };
+
     return (
         <div>
+
+            <SearchAppBar onSearch={handleSearch} />
+
             <Typography variant="h4" gutterBottom>
                 Ordens de Serviço
             </Typography>
