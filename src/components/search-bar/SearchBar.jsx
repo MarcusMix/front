@@ -87,6 +87,10 @@ export default function SearchAppBar({ onSearch }) {
   const [cep, setCep] = useState(''); // Estado para armazenar o CEP
   const [searchTerm, setSearchTerm] = useState('');
 
+  const handleLinkClick = () => {
+    window.location.reload(); // Recarrega a página
+  };
+
   const fetchAddress = async (cep) => {
     if (cep.length === 8) {
       try {
@@ -233,7 +237,13 @@ export default function SearchAppBar({ onSearch }) {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
           >
-            <Link to="/" style={{ textDecoration: 'none' }} className="link-main">
+            <Link
+              to="/"
+              style={{ textDecoration: 'none' }}
+              className="link-main"
+
+              onClick={handleLinkClick} // Chama a função ao clicar no link
+            >
               Marketplace do Job
             </Link>
           </Typography>
