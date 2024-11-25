@@ -130,7 +130,15 @@ export default function SearchAppBar({ onSearch }) {
 
         const results = await response.json();
 
-        onSearch(results); // Chamar a função onSearch recebida como prop
+        if (results.length === 0) {
+          toast.error('Nenhum serviço encontrado'); // Exibe a mensagem de erro
+          setTimeout(function () {
+            window.location.reload();
+          }, 1000);
+        } else {
+          onSearch(results); // Chamar a função onSearch recebida como prop
+        }
+
       } else {
         console.error("Endereço não encontrado para o CEP informado.");
       }
