@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Importe o useNavigate
 import SearchAppBar from '../../components/search-bar/SearchBar';
 import getDataFunction from '../../api/api';
-import { Avatar, Card, CardContent, CardHeader, Grid, Typography, Button, Modal, Box } from '@mui/material';
+import { Avatar, Card, CardContent, CardHeader, Grid, Typography, Button, Modal, Box, Stack } from '@mui/material';
 import { red } from '@mui/material/colors';
 import OfferedServiceCard from '../../components/offered-service-card/OfferedServiceCard';
 import { jwtDecode } from 'jwt-decode';
@@ -120,9 +120,14 @@ function LoggedInServiceProviderProfile() {
                             subheader={providerData.description}
                         />
 
-                        <Button variant="contained" color="primary" onClick={handleOpenModal}>
-                            Criar Novo Serviço
-                        </Button>
+                        <Stack direction="row" spacing={2}> {/* Ou use Grid */}
+                            <Button variant="contained" color="primary" onClick={handleOpenModal}>
+                                Criar Novo Serviço
+                            </Button>
+                            <Button variant="contained" color="primary" onClick={() => navigate('/service-orders')}>
+                                Ver Ordens de Serviço
+                            </Button>
+                        </Stack>
 
                         <CardContent>
                             <Typography variant="body2" color="text.secondary">
