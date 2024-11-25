@@ -8,6 +8,7 @@ import SignUpService from './pages/signup-service/signup-service';
 import Profile from './pages/profile/profile';
 import ProviderProfile from './pages/providerProfile/providerProfile'; // Importe o componente
 import LoggedInServiceProviderProfile from './pages/LoggedInServiceProviderProfile/LoggedInServiceProviderProfile'; // Importe o componente
+import ServiceOrders from './components/serviceorders/ServiceOrders';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/provider-profile/:id" element={<ProviderProfile />} />
         <Route path="/my-provider-profile" element={<LoggedInServiceProviderProfile />} />
+        <Route path="/service-orders" element={<ServiceOrders />} />
       </Routes>
     </Router>
   );
