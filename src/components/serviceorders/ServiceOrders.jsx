@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import ServiceOrderItem from '../ServiceOrderItem/ServiceOrderItem';
 import SearchAppBar from '../search-bar/SearchBar';
+import './serviceOrders.css';
 
 function ServiceOrders() {
     const navigate = useNavigate();
@@ -71,26 +72,29 @@ function ServiceOrders() {
     };
 
     return (
+
         <div>
-
+            
             <SearchAppBar onSearch={handleSearch} />
+            <div className="service-orders-container">
 
-            <Typography variant="h4" gutterBottom>
-                Ordens de Serviço
-            </Typography>
-            {orders.length === 0 ? (
-                <Typography variant="body1">Nenhuma ordem de serviço encontrada.</Typography>
-            ) : (
-                <List>
-                    {orders.map(order => (
-                        <ServiceOrderItem
-                            key={order.id}
-                            order={order}
-                            onStatusChange={handleStatusChange} // Passa a função para atualizar o status
-                        />
-                    ))}
-                </List>
-            )}
+                <Typography variant="h4" gutterBottom>
+                    Ordens de Serviço
+                </Typography>
+                {orders.length === 0 ? (
+                    <Typography variant="body1">Nenhuma ordem de serviço encontrada.</Typography>
+                ) : (
+                    <List>
+                        {orders.map(order => (
+                            <ServiceOrderItem
+                                key={order.id}
+                                order={order}
+                                onStatusChange={handleStatusChange} // Passa a função para atualizar o status
+                            />
+                        ))}
+                    </List>
+                )}
+            </div>
         </div>
     );
 }
