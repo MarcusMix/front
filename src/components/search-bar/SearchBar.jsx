@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { styled, alpha } from '@mui/material/styles';
-import { Link } from 'react-router-dom'; // Importando o Link
+import { Link, useLocation } from 'react-router-dom'; // Importando o Link
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -87,8 +87,12 @@ export default function SearchAppBar({ onSearch }) {
   const [cep, setCep] = useState(''); // Estado para armazenar o CEP
   const [searchTerm, setSearchTerm] = useState('');
 
+  const location = useLocation(); // Obtém a localização atual
+
   const handleLinkClick = () => {
-    window.location.reload(); // Recarrega a página
+    if (location.pathname === '/') {
+      window.location.reload(); // Recarrega se estiver no Home
+    }
   };
 
   const fetchAddress = async (cep) => {
@@ -243,7 +247,7 @@ export default function SearchAppBar({ onSearch }) {
               style={{ textDecoration: 'none' }}
               className="link-main"
 
-              onClick={handleLinkClick} // Chama a função ao clicar no link
+              onClick={handleLinkClick}
             >
               Marketplace do Job
             </Link>
