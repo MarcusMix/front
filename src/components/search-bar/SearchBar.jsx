@@ -87,6 +87,10 @@ export default function SearchAppBar({ onSearch }) {
   const [cep, setCep] = useState(''); // Estado para armazenar o CEP
   const [searchTerm, setSearchTerm] = useState('');
 
+  const handleLinkClick = () => {
+    window.location.reload(); // Recarrega a página
+  };
+
   const fetchAddress = async (cep) => {
     if (cep.length === 8) {
       try {
@@ -108,32 +112,40 @@ export default function SearchAppBar({ onSearch }) {
 
   const handleSearch = async () => {
     try {
-      const address = await fetchAddress(cep); // Chamar a função fetchAddress
-      if (address) {
-        const userLocation = address.localidade;
-
-        // Definir searchDTO aqui, antes da requisição fetch
-        const searchDTO = {
-          serviceName: searchTerm,
-          userLocation: userLocation,
-        };
-
-        const token = localStorage.getItem('token'); // Obter o token do localStorage
-        const response = await fetch('http://localhost:8080/offered-service/search', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify(searchDTO),
-        });
-
-        const results = await response.json();
-
-        onSearch(results); // Chamar a função onSearch recebida como prop
-      } else {
-        console.error("Endereço não encontrado para o CEP informado.");
+      let address = null;
+      if (cep) {
+        address = await fetchAddress(cep);
       }
+
+      const userLocation = address ? address.localidade : null;
+
+      const searchDTO = {
+        serviceName: searchTerm,
+        userLocation: userLocation,
+      };
+
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:8080/offered-service/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(searchDTO),
+      });
+
+      const results = await response.json();
+
+      if (results.length === 0) {
+        toast.error('Nenhum serviço encontrado');
+        setTimeout(function () {
+          window.location.reload();
+        }, 1000);
+      } else {
+        onSearch(results);
+        toast.success('Serviços encontrados');
+      }
+
     } catch (error) {
       console.error('Erro ao buscar serviços:', error);
     }
@@ -226,7 +238,13 @@ export default function SearchAppBar({ onSearch }) {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
           >
-            <Link to="/" style={{ textDecoration: 'none' }} className="link-main">
+            <Link
+              to="/"
+              style={{ textDecoration: 'none' }}
+              className="link-main"
+
+              onClick={handleLinkClick} // Chama a função ao clicar no link
+            >
               Marketplace do Job
             </Link>
           </Typography>
