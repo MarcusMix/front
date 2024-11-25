@@ -108,40 +108,39 @@ export default function SearchAppBar({ onSearch }) {
 
   const handleSearch = async () => {
     try {
-      const address = await fetchAddress(cep); // Chamar a função fetchAddress
-      if (address) {
-        const userLocation = address.localidade;
-
-        // Definir searchDTO aqui, antes da requisição fetch
-        const searchDTO = {
-          serviceName: searchTerm,
-          userLocation: userLocation,
-        };
-
-        const token = localStorage.getItem('token'); // Obter o token do localStorage
-        const response = await fetch('http://localhost:8080/offered-service/search', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify(searchDTO),
-        });
-
-        const results = await response.json();
-
-        if (results.length === 0) {
-          toast.error('Nenhum serviço encontrado'); // Exibe a mensagem de erro
-          setTimeout(function () {
-            window.location.reload();
-          }, 1000);
-        } else {
-          onSearch(results); // Chamar a função onSearch recebida como prop
-        }
-
-      } else {
-        console.error("Endereço não encontrado para o CEP informado.");
+      let address = null;
+      if (cep) {
+        address = await fetchAddress(cep);
       }
+
+      const userLocation = address ? address.localidade : null;
+
+      const searchDTO = {
+        serviceName: searchTerm,
+        userLocation: userLocation,
+      };
+
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:8080/offered-service/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(searchDTO),
+      });
+
+      const results = await response.json();
+
+      if (results.length === 0) {
+        toast.error('Nenhum serviço encontrado');
+        setTimeout(function () {
+          window.location.reload();
+        }, 1000);
+      } else {
+        onSearch(results);
+      }
+
     } catch (error) {
       console.error('Erro ao buscar serviços:', error);
     }
