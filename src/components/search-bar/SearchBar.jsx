@@ -143,6 +143,7 @@ export default function SearchAppBar({ onSearch }) {
         }, 1000);
       } else {
         onSearch(results);
+        toast.success('Serviços encontrados');
       }
 
     } catch (error) {
