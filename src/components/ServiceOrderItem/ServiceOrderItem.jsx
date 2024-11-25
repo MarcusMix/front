@@ -16,7 +16,7 @@ function ServiceOrderItem({ order, onStatusChange }) { // Recebe a ordem e a fun
                 </Button>
             )}
             {status === 'ACCEPTED' && (
-                <Button variant="contained" color="secondary" onClick={() => onStatusChange(order.id, 'FINISHED')}>
+                <Button variant="contained" color="error" onClick={() => onStatusChange(order.id, 'FINISHED')}>
                     Finalizar
                 </Button>
             )}
