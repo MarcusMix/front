@@ -1,31 +1,40 @@
 import * as React from 'react';
-import { Card, CardHeader, CardMedia, CardContent, CardActions, Avatar, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
+import {
+  Card, CardHeader, CardMedia, CardContent, CardActions, Avatar, Typography
+} from '@mui/material';
 import { red } from '@mui/material/colors';
 
-export default function CardMaterial({ title, subheader, avatarLetter, image, experience, nameProvider }) {
+export default function CardMaterial({ title, subheader, avatarImage, image, experience, nameProvider, serviceProviderId }) { // Adicione serviceProviderId aqui
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            {avatarLetter}
-          </Avatar>
+          avatarImage ? (
+            <Link to={`/provider-profile/${serviceProviderId}`}>
+              <Avatar alt={nameProvider} src={avatarImage} onClick={(e) => e.stopPropagation()} />
+            </Link>
+          ) : (
+            <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+              {title[0]}
+            </Avatar>
+          )
         }
-        title={title} 
-        subheader={subheader} 
+        title={title}
+        subheader={subheader}
       />
       <CardMedia
         component="img"
         height="194"
-        image={image} 
+        image={image}
         alt={title}
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          Experiência: {experience} {/* Experiência dinâmica */}
+          Experiência: {experience}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Prestador: {nameProvider} 
+          Prestador: {nameProvider}
         </Typography>
       </CardContent>
     </Card>

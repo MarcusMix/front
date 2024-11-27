@@ -1,5 +1,7 @@
+
 import { Typography, Grid } from '@mui/material';
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Importa o useNavigate
 import SearchAppBar from '../../components/search-bar/SearchBar';
 import CardMaterial from '../../components/card/CardMaterial';
 import getDataFunction from '../../api/api';
@@ -7,17 +9,20 @@ import getDataFunction from '../../api/api';
 function Home() {
   const [offeredServices, setOfferedServiceData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [serviceProviders, setServiceProviders] = useState({}); // Armazena prestadores de serviço
+  const [serviceProviders, setServiceProviders] = useState({});
+  const [searchResults, setSearchResults] = useState([]);
+  const navigate = useNavigate(); // Para navegação
 
   async function fetchOfferedService() {
     try {
-      const offeredServiceData = await getDataFunction('offered-services');
+      // Aqui vamos manter 'offered-service' como o endpoint correto, de acordo com o que foi solicitado
+      const offeredServiceData = await getDataFunction('offered-service');
       console.log('Dados retornados pela API:', offeredServiceData);
       setOfferedServiceData(offeredServiceData);
 
       // Para cada serviceProviderId, faça uma requisição para buscar os dados do prestador de serviço
       const providerDataPromises = offeredServiceData.map(async (service) => {
-        if (service.serviceProviderId) { // Verifica se o serviceProviderId existe
+        if (service.serviceProviderId) {
           const providerData = await getDataFunction(`service-provider/${service.serviceProviderId}`);
           return { [service.serviceProviderId]: providerData };
         }
@@ -26,7 +31,7 @@ function Home() {
 
       const providers = await Promise.all(providerDataPromises);
       const providerMap = Object.assign({}, ...providers.filter(Boolean)); // Filtra valores nulos
-      setServiceProviders(providerMap);  // Armazena os dados dos prestadores por ID
+      setServiceProviders(providerMap); // Armazena os dados dos prestadores por ID
     } catch (error) {
       console.error('Erro ao buscar dados do prestador de serviço:', error);
     } finally {
@@ -38,38 +43,40 @@ function Home() {
     fetchOfferedService();
   }, []);
 
+  const handleCardClick = (offeredServiceId) => {
+    // Navega para a página de detalhes do serviço utilizando o ID correto
+    navigate(`/service/${offeredServiceId}`);
+  };
+
+  const handleSearch = (results) => {
+    setSearchResults(results);
+  };
+
   if (loading) {
     return <Typography>Carregando...</Typography>;
   }
 
-  if (offeredServices.length === 0) {
-    return <Typography>Erro: Nenhum prestador de serviço encontrado.</Typography>;
-  }
-
   return (
     <div>
-      <SearchAppBar />
-      <Typography variant="h1" component="h2">
-        Tela inicial
-      </Typography>
+      <SearchAppBar onSearch={handleSearch} />
+      {/* Espaço para compensar a altura da AppBar */}
+      <div style={{ height: '80px' }} />
       <Grid container spacing={4} justifyContent="center">
-        {offeredServices.map((offeredService) => (
-          <Grid item key={offeredService.id}>
-            <div style={{ minWidth: '280px', maxWidth: '300px' }}>
+        {(searchResults.length > 0 ? searchResults : offeredServices).map((offeredService) => (
+          <Grid
+            item
+            key={offeredService.id}
+            onClick={() => handleCardClick(offeredService.id)} // Passa o ID do serviço
+          >
+            <div style={{ minWidth: '280px', maxWidth: '300px', cursor: 'pointer' }}>
               <CardMaterial
                 title={offeredService.name}
-                // subheader={offeredService.description}
-                avatarLetter={
-                  serviceProviders[offeredService.serviceProviderId]
-                    ? serviceProviders[offeredService.serviceProviderId].name[0] // Usa a primeira letra do nome do serviceProvider
-                    : offeredService.name[0] || 'N' // Usa a primeira letra do nome do offeredService ou 'N'
-                }
-                image={serviceProviders[offeredService.serviceProviderId].image || ''}
-                experience={serviceProviders[offeredService.serviceProviderId].experience}
+                serviceProviderId={offeredService.serviceProviderId}
+                avatarImage={`data:image/jpeg;base64,${serviceProviders[offeredService.serviceProviderId]?.image}`}
+                image={`data:image/jpeg;base64,${offeredService.image}`}
+                experience={serviceProviders[offeredService.serviceProviderId]?.experience}
                 nameProvider={
-                  serviceProviders[offeredService.serviceProviderId]
-                    ? serviceProviders[offeredService.serviceProviderId].name
-                    : 'Prestador não encontrado' // Valor padrão se não encontrar o prestador
+                  serviceProviders[offeredService.serviceProviderId]?.name || 'Prestador não encontrado'
                 }
               />
             </div>
