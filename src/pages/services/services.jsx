@@ -110,7 +110,7 @@ function ServiceDetails() {
         <Typography variant="body1" align="center" color="textSecondary" paragraph>
           Experiência: {serviceProvider.experience} anos
         </Typography>
-        <Typography variant="body1" align="center" color="textSecondary" paragraph>
+        <Typography variant="body1" align="center" color="textSecondary" sx={{ textAlign: 'justify' }} paragraph>
           {serviceProvider.description || 'Nenhuma descrição disponível.'}
         </Typography>
 
@@ -124,7 +124,7 @@ function ServiceDetails() {
           {offeredService.name}
         </Typography>
 
-        <Typography variant="body1" align="center" color="textSecondary" paragraph>
+        <Typography variant="body1" align="center" color="textSecondary" sx={{ textAlign: 'justify' }} paragraph>
           {offeredService.description}
         </Typography>
 
