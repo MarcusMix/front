@@ -5,7 +5,6 @@ import MyButton from '../../components/button/button';
 import Title from '../../components/title/Title';
 import FormBox from '../../components/form-box/FormBox';
 import FormContainer from '../../components/form-container/FormContainer';
-import getDataFunction from '../../api/register_user';
 import Subtitle from '../../components/subtitle/Subtitle';
 import { toast } from 'react-hot-toast';
 import userAPI from '../../api/user';
@@ -22,6 +21,7 @@ const SignUpUser = () => {
   });
 
   const [addressData, setAddressData] = useState({
+    cep: '',
     street: '',
     number: '',
     neighborhood: '',
@@ -39,6 +39,38 @@ const SignUpUser = () => {
     setAddressData((prevAddressData) => ({ ...prevAddressData, [name]: value }));
   };
 
+  const fetchAddressFromCEP = async (cep) => {
+    const formattedCEP = cep.replace(/\D/g, ''); // Remove caracteres não numéricos
+
+    if (formattedCEP.length !== 8) {
+      toast.error('CEP inválido. Por favor, insira um CEP com 8 dígitos.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${formattedCEP}/json/`);
+      const data = await response.json();
+
+      if (data.erro) {
+        toast.error('CEP não encontrado.');
+        return;
+      }
+
+      setAddressData((prevAddressData) => ({
+        ...prevAddressData,
+        street: data.logradouro || '',
+        neighborhood: data.bairro || '',
+        city: data.localidade || '',
+        state: data.uf || '',
+      }));
+
+      toast.success('Endereço preenchido com sucesso!');
+    } catch (error) {
+      console.error('Erro ao buscar o endereço:', error);
+      toast.error('Erro ao buscar o endereço. Tente novamente.');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -51,8 +83,6 @@ const SignUpUser = () => {
       const addressResponse = await registerUser('address', 'POST', addressData);
 
       if (addressResponse && addressResponse.id) {
-        console.log('Address data saved successfully:', addressResponse);
-
         const userDataWithAddress = {
           ...userData,
           address: {
@@ -60,10 +90,7 @@ const SignUpUser = () => {
           },
         };
 
-        console.log('User Data With Address:', userDataWithAddress);
-
         const userResponse = await userAPI('auth/register', 'POST', userDataWithAddress);
-        console.log('User Response:', userResponse);
 
         if (userResponse == undefined) {
           toast.success('Usuário cadastrado com sucesso!');
@@ -73,7 +100,6 @@ const SignUpUser = () => {
         } else {
           toast.error('Usuário cadastrado, mas a resposta não foi recebida corretamente.');
         }
-
       } else {
         toast.error('Houve um erro ao salvar os dados do endereço.');
         throw new Error('Failed to save address data.');
@@ -83,7 +109,6 @@ const SignUpUser = () => {
       toast.error('Houve um erro ao salvar os dados. Verifique os campos e tente novamente.');
     }
   };
-
 
   return (
     <FormBox>
@@ -119,17 +144,18 @@ const SignUpUser = () => {
         <FormContainer>
           <Input
             type="text"
-            name="street"
-            placeholder="Rua"
-            value={addressData.street}
+            name="cep"
+            placeholder="CEP"
+            value={addressData.cep}
             onChange={handleAddressChange}
+            onBlur={() => fetchAddressFromCEP(addressData.cep)}
             required
           />
           <Input
             type="text"
-            name="number"
-            placeholder="Número"
-            value={addressData.number}
+            name="street"
+            placeholder="Rua"
+            value={addressData.street}
             onChange={handleAddressChange}
             required
           />
@@ -154,6 +180,14 @@ const SignUpUser = () => {
             name="state"
             placeholder="Estado"
             value={addressData.state}
+            onChange={handleAddressChange}
+            required
+          />
+          <Input
+            type="text"
+            name="number"
+            placeholder="Número"
+            value={addressData.number}
             onChange={handleAddressChange}
             required
           />
