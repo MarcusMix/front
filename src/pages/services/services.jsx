@@ -7,6 +7,7 @@ import Button from '../../components/button/button';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-hot-toast';
+import SearchAppBar from "../../components/search-bar/SearchBar";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   maxWidth: '600px',
@@ -96,20 +97,21 @@ function ServiceDetails() {
 
   return (
     <Container>
-      <StyledCard>
-        <AvatarContainer>
-          <Avatar 
+      <SearchAppBar />
+      <StyledCard style={{ marginTop: '100px' }} >
+        <AvatarContainer style={{ c: '100px', display: 'flex', alignItems: 'center' }}>
+          <Avatar
             sx={{ width: 80, height: 80 }}
             src={serviceProvider.image ? `data:image/jpeg;base64,${serviceProvider.image}` : '/default-avatar.png'}
             alt={serviceProvider.name}
           />
+          <ServiceProviderName variant="h4" sx={{ marginLeft: 2 }}>{serviceProvider.name}</ServiceProviderName>
         </AvatarContainer>
-        <ServiceProviderName variant="h4">{serviceProvider.name}</ServiceProviderName>
         <Typography variant="body1" align="center" color="textSecondary" paragraph>
           Experiência: {serviceProvider.experience} anos
         </Typography>
         <Typography variant="body1" align="center" color="textSecondary" paragraph>
-          Descrição: {serviceProvider.description || 'Nenhuma descrição disponível.'}
+          {serviceProvider.description || 'Nenhuma descrição disponível.'}
         </Typography>
 
         {/* Informações do serviço oferecido */}
@@ -146,7 +148,7 @@ function ServiceDetails() {
           <Button type="submit" label="Contratar Serviço" onClick={handleHireService} />
         </Box>
       </StyledCard>
-    </Container>
+    </Container >
   );
 }
 
