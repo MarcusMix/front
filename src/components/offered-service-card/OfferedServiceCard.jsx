@@ -59,7 +59,12 @@ function OfferedServiceCard({ service, isServiceProvider, onEdit }) {
     return (
         <Card>
             <CardContent>
-                <Typography variant="h6" component="div">
+                <Typography variant="h6" component="div" sx={{
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: 200 // Defina o tamanho máximo em pixels
+                }}>
                     {name}
                 </Typography>
                 {image && (
@@ -70,7 +75,18 @@ function OfferedServiceCard({ service, isServiceProvider, onEdit }) {
                         alt={name}
                     />
                 )}
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: 'vertical',
+                        maxWidth: 200,
+                        lineHeight: 1.5,
+                    }}
+                >
                     {description}
                 </Typography>
                 <Typography variant="subtitle1" color="text.primary">
