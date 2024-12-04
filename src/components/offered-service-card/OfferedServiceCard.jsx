@@ -58,12 +58,11 @@ function OfferedServiceCard({ service, isServiceProvider, onEdit }) {
 
     return (
         <Card>
-            <CardContent>
+            <CardContent sx={{ height: 250 }}>
                 <Typography variant="h6" component="div" sx={{
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    maxWidth: 200 // Defina o tamanho máximo em pixels
                 }}>
                     {name}
                 </Typography>
@@ -79,12 +78,13 @@ function OfferedServiceCard({ service, isServiceProvider, onEdit }) {
                     variant="body2"
                     color="text.secondary"
                     sx={{
+                        display: '-webkit-box', // Adicionando esta linha
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         WebkitLineClamp: 3,
                         WebkitBoxOrient: 'vertical',
-                        maxWidth: 200,
                         lineHeight: 1.5,
+                        overflowWrap: 'break-word',
                     }}
                 >
                     {description}
