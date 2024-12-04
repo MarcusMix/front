@@ -95,10 +95,10 @@ function OfferedServiceCard({ service, isServiceProvider, onEdit }) {
             </CardContent>
             {isServiceProvider ? (
                 <div className="buttons-container">
-                    <Button variant="contained" color="primary" onClick={handleEditService} className="edit-button">
+                    <Button variant="contained" color="primary" onClick={handleEditService} className="edit-button" sx={{ fontSize: 12 }}>
                         Editar Serviço
                     </Button>
-                    <Button variant="contained" color="error" onClick={handleDeleteService} className="delete-button">
+                    <Button variant="contained" color="error" onClick={handleDeleteService} className="delete-button" sx={{ fontSize: 12 }}>
                         Excluir Serviço
                     </Button>
                 </div>

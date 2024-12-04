@@ -1,21 +1,13 @@
-.edit-button,
-.delete-button {
-    width: 90px;
-    height: 50px;
-    margin-right: 5px;
-}
-
-.edit-button {
-    background-color: blue;
-    color: white;
-}
-
-.delete-button {
-    background-color: red;
-    color: white;
-}
-
 .buttons-container {
     display: flex;
     justify-content: center;
+    gap: 8px;
+    padding-bottom: 10px;
+}
+
+.edit-button,
+.delete-button {
+    width: 80px;
+    height: 40px;
+
 }
