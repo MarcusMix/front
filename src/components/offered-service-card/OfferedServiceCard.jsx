@@ -3,6 +3,9 @@ import { Card, CardContent, CardMedia, Typography, Button } from '@mui/material'
 import axios from 'axios'; // Importe o axios
 import { jwtDecode } from 'jwt-decode'; // Importe a biblioteca
 import { toast } from 'react-hot-toast';
+import ReactStars from "react-rating-stars-component";
+import StarIcon from '@mui/icons-material/Star';
+import StarHalfIcon from '@mui/icons-material/StarHalf';
 import './OfferedServiceCard.css'
 
 function OfferedServiceCard({ service, isServiceProvider, onEdit }) {
@@ -92,6 +95,19 @@ function OfferedServiceCard({ service, isServiceProvider, onEdit }) {
                 <Typography variant="subtitle1" color="text.primary">
                     Preço: R$ {price}
                 </Typography>
+                {!isServiceProvider && service.totalRating && (
+                    <ReactStars
+                        count={5}
+                        value={service.totalRating}
+                        size={24}
+                        edit={false}
+                        activeColor="#ffd700"
+                        emptyIcon={<StarIcon style={{ opacity: 0.55 }} />}
+                        halfIcon={<StarHalfIcon />}
+                        isHalf={true}
+                        filledIcon={<StarIcon />}
+                    />
+                )}
             </CardContent>
             {isServiceProvider ? (
                 <div className="buttons-container">
