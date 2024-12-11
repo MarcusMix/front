@@ -28,6 +28,7 @@ export default function CardMaterial({ title, subheader, avatarImage, image, exp
         height="194"
         image={image}
         alt={title}
+        sx={{ objectFit: 'contain' }}
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">

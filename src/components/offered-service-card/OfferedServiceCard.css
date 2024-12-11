@@ -1,27 +1,13 @@
-.edit-button,
-.delete-button {
-    width: 90px;
-    height: 50px;
-    /* Ajuste a largura conforme necessário */
-    margin-right: 5px;
-    /* Espaçamento entre os botões */
-}
-
-.edit-button {
-    background-color: blue;
-    /* Cor de fundo azul */
-    color: white;
-    /* Cor do texto branca */
-}
-
-.delete-button {
-    background-color: red;
-    /* Cor de fundo vermelha */
-    color: white;
-    /* Cor do texto branca */
-}
-
 .buttons-container {
     display: flex;
     justify-content: center;
+    gap: 8px;
+    padding-bottom: 10px;
+}
+
+.edit-button,
+.delete-button {
+    width: 80px;
+    height: 40px;
+
 }

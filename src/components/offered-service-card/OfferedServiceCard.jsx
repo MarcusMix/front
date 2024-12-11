@@ -3,6 +3,9 @@ import { Card, CardContent, CardMedia, Typography, Button } from '@mui/material'
 import axios from 'axios'; // Importe o axios
 import { jwtDecode } from 'jwt-decode'; // Importe a biblioteca
 import { toast } from 'react-hot-toast';
+import ReactStars from "react-rating-stars-component";
+import StarIcon from '@mui/icons-material/Star';
+import StarHalfIcon from '@mui/icons-material/StarHalf';
 import './OfferedServiceCard.css'
 
 function OfferedServiceCard({ service, isServiceProvider, onEdit }) {
@@ -58,8 +61,12 @@ function OfferedServiceCard({ service, isServiceProvider, onEdit }) {
 
     return (
         <Card>
-            <CardContent>
-                <Typography variant="h6" component="div">
+            <CardContent sx={{ height: 250 }}>
+                <Typography variant="h6" component="div" sx={{
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                }}>
                     {name}
                 </Typography>
                 {image && (
@@ -70,19 +77,44 @@ function OfferedServiceCard({ service, isServiceProvider, onEdit }) {
                         alt={name}
                     />
                 )}
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                        display: '-webkit-box', // Adicionando esta linha
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: 'vertical',
+                        lineHeight: 1.5,
+                        overflowWrap: 'break-word',
+                    }}
+                >
                     {description}
                 </Typography>
                 <Typography variant="subtitle1" color="text.primary">
                     Preço: R$ {price}
                 </Typography>
+                {!isServiceProvider && service.totalRating && (
+                    <ReactStars
+                        count={5}
+                        value={service.totalRating}
+                        size={24}
+                        edit={false}
+                        activeColor="#ffd700"
+                        emptyIcon={<StarIcon style={{ opacity: 0.55 }} />}
+                        halfIcon={<StarHalfIcon />}
+                        isHalf={true}
+                        filledIcon={<StarIcon />}
+                    />
+                )}
             </CardContent>
             {isServiceProvider ? (
                 <div className="buttons-container">
-                    <Button variant="contained" color="primary" onClick={handleEditService} className="edit-button">
+                    <Button variant="contained" color="primary" onClick={handleEditService} className="edit-button" sx={{ fontSize: 12 }}>
                         Editar Serviço
                     </Button>
-                    <Button variant="contained" color="error" onClick={handleDeleteService} className="delete-button">
+                    <Button variant="contained" color="error" onClick={handleDeleteService} className="delete-button" sx={{ fontSize: 12 }}>
                         Excluir Serviço
                     </Button>
                 </div>
